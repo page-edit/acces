@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beubeuland • Admin</title>
+<title>Beubeuland • ines_dz🇲🇦🫦</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
@@ -237,9 +237,9 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #
       <div class="admin-title-group">
         <div style="display:flex;align-items:center;">
           <span class="admin-title">beubeuland</span>
-          <span class="admin-badge">ines_dz❤️🫦</span>
+          <span class="admin-badge">ines_dz🇲🇦🫦</span>
         </div>
-        <span class="admin-subtitle">Panneau de modération — ines_dz❤️🫦</span>
+        <span class="admin-subtitle">Panneau de modération — ines_dz🇲🇦🫦</span>
       </div>
     </div>
     <a href="index.html" class="admin-back-btn">
@@ -516,7 +516,7 @@ async function publishAdminVideo() {
       fileType: file.type,
       fileName: file.name,
       authorId: 'admin',
-      authorName: 'Admin',
+      authorName: 'ines_dz🇲🇦🫦',
       isAdmin: true,
       created_at: new Date().toISOString()
     });
@@ -614,7 +614,7 @@ async function loadAllVideos() {
       const author = users.find(u => u.userId === v.authorId);
       const authorName = v.authorName || (author ? author.name : 'Inconnu');
       const isAdmin = v.isAdmin || v.authorId === 'admin';
-      const authorBadge = isAdmin ? '<span class="badge badge-admin" style="margin-left:6px;">Admin</span>' : '';
+      const authorBadge = isAdmin ? '<span class="badge badge-admin" style="margin-left:6px;">ines_dz🇲🇦🫦</span>' : '';
 
       html += `<tr>
         <td>
