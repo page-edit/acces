@@ -206,10 +206,31 @@ body {
 .volume-btn:hover .volume-slider { 
   display: flex; 
 }
-.volume-slider input[type="range"] { 
-  -webkit-appearance: slider-vertical; 
-  width: 18px; 
-  height: 64px; 
+.volume-slider input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 4px;
+  height: 64px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  outline: none;
+}
+.volume-slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.volume-slider input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
 }
 
 .video-loader { 
@@ -255,6 +276,11 @@ body {
   pointer-events: none;
   backdrop-filter: blur(4px);
   border: 2px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+}
+.big-play-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 .big-play-btn.visible { 
   opacity: 1; 
@@ -337,7 +363,7 @@ body {
   position: absolute; 
   inset: 0; 
   background: rgba(0,0,0,0.92); 
-  z-index: 40;
+  z-index: 60;
   display: flex; 
   align-items: center; 
   justify-content: center;
@@ -377,16 +403,22 @@ body {
 }
 
 /* Fullscreen styles */
-:fullscreen, :-webkit-full-screen, :-moz-full-screen, :-ms-fullscreen {
+:fullscreen {
   background: #000 !important;
 }
-:fullscreen video,
-:-webkit-full-screen video,
-:-moz-full-screen video,
-:-ms-fullscreen video {
+:-webkit-full-screen {
+  background: #000 !important;
+}
+:fullscreen .video-wrapper,
+:-webkit-full-screen .video-wrapper {
   width: 100vw !important;
   height: 100vh !important;
-  object-fit: cover !important;
+}
+:fullscreen video,
+:-webkit-full-screen video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
 }
 
 @keyframes devToastIn {
@@ -562,7 +594,7 @@ body {
 
 <!-- Comment Modal -->
 <div id="comment-modal" class="profile-edit-modal">
-  <div class="profile-edit-box" style="max-width: 400px; max-height: 80vh; display: flex; flex-direction: column;">
+  <div class="profile-edit-box" style="max-width: 400px; max-height: 80vh; display: flex; flex-direction: column; overflow: hidden;">
     <div class="flex justify-between items-center mb-4">
       <h3 class="font-bold text-lg"><i class="fas fa-comments mr-2 text-emerald-400"></i>Commentaires</h3>
       <button onclick="closeCommentModal()" class="text-zinc-400 hover:text-white"><i class="fas fa-times"></i></button>
@@ -735,6 +767,7 @@ function openDB() {
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
+    req.onblocked = () => reject(new Error('IndexedDB blocked'));
   });
 }
 
@@ -742,9 +775,14 @@ async function saveToStore(store, data) {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(store, 'readwrite');
-    tx.objectStore(store).put(data);
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(new Error('Transaction aborted'));
+    try {
+      tx.objectStore(store).put(data);
+    } catch (e) {
+      reject(e);
+    }
   });
 }
 
@@ -753,7 +791,7 @@ async function getFromStore(store, key) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction(store, 'readonly');
     const req = tx.objectStore(store).get(key);
-    req.onsuccess = () => resolve(req.result);
+    req.onsuccess = () => resolve(req.result !== undefined ? req.result : null);
     req.onerror = () => reject(req.error);
   });
 }
@@ -765,6 +803,7 @@ async function getAllFromStore(store) {
     const req = tx.objectStore(store).getAll();
     req.onsuccess = () => resolve(req.result || []);
     req.onerror = () => reject(req.error);
+    tx.onerror = () => reject(tx.error);
   });
 }
 
@@ -772,9 +811,14 @@ async function deleteFromStore(store, key) {
   const db = await openDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(store, 'readwrite');
-    tx.objectStore(store).delete(key);
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(new Error('Transaction aborted'));
+    try {
+      tx.objectStore(store).delete(key);
+    } catch (e) {
+      reject(e);
+    }
   });
 }
 
@@ -788,75 +832,112 @@ async function getVideos() {
 
 /* ========== USER ========== */
 function getUserId() {
-  let uid = localStorage.getItem('beubeuland_userId');
-  if (!uid) {
-    uid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('beubeuland_userId', uid);
+  try {
+    let uid = localStorage.getItem('beubeuland_userId');
+    if (!uid) {
+      uid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('beubeuland_userId', uid);
+    }
+    return uid;
+  } catch (e) {
+    return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   }
-  return uid;
 }
 
 async function saveUserProfile(profile) {
-  const uid = getUserId();
-  await saveToStore(STORE_USERS, {
-    userId: uid, name: profile.name || 'Beubeuland', bio: profile.bio || '',
-    avatar: profile.avatar || null, isPremium: isPremium,
-    joinedAt: profile.joinedAt || new Date().toISOString(),
-    lastActive: new Date().toISOString()
-  });
+  try {
+    const uid = getUserId();
+    await saveToStore(STORE_USERS, {
+      userId: uid, name: profile.name || 'Beubeuland', bio: profile.bio || '',
+      avatar: profile.avatar || null, isPremium: isPremium,
+      joinedAt: profile.joinedAt || new Date().toISOString(),
+      lastActive: new Date().toISOString()
+    });
+  } catch (e) {
+    console.error('Erreur sauvegarde profil:', e);
+  }
 }
 
 async function loadUserProfile() {
-  const data = await getFromStore(STORE_USERS, getUserId());
-  if (data) {
-    userProfile = { name: data.name, bio: data.bio, avatar: data.avatar };
-    localStorage.setItem('beubeuland_profile', JSON.stringify(userProfile));
+  try {
+    const data = await getFromStore(STORE_USERS, getUserId());
+    if (data) {
+      userProfile = { name: data.name, bio: data.bio, avatar: data.avatar };
+      localStorage.setItem('beubeuland_profile', JSON.stringify(userProfile));
+    }
+  } catch (e) {
+    console.error('Erreur chargement profil:', e);
   }
 }
 
 /* ========== LIKES ========== */
 async function getLikesForVideo(videoId) {
-  const likes = await getAllFromStore(STORE_LIKES);
-  return likes.filter(l => l.videoId === videoId);
+  try {
+    const likes = await getAllFromStore(STORE_LIKES);
+    return likes.filter(l => l.videoId === videoId);
+  } catch (e) {
+    console.error('Erreur chargement likes:', e);
+    return [];
+  }
 }
 
 async function hasUserLiked(videoId) {
-  const likes = await getAllFromStore(STORE_LIKES);
-  return likes.some(l => l.videoId === videoId && l.userId === getUserId());
+  try {
+    const likes = await getAllFromStore(STORE_LIKES);
+    return likes.some(l => l.videoId === videoId && l.userId === getUserId());
+  } catch (e) {
+    console.error('Erreur vérification like:', e);
+    return false;
+  }
 }
 
 async function toggleLike(videoId) {
-  const likes = await getAllFromStore(STORE_LIKES);
-  const existing = likes.find(l => l.videoId === videoId && l.userId === getUserId());
-  if (existing) {
-    await deleteFromStore(STORE_LIKES, existing.id);
+  try {
+    const likes = await getAllFromStore(STORE_LIKES);
+    const existing = likes.find(l => l.videoId === videoId && l.userId === getUserId());
+    if (existing) {
+      await deleteFromStore(STORE_LIKES, existing.id);
+      return false;
+    } else {
+      await saveToStore(STORE_LIKES, {
+        videoId: videoId, userId: getUserId(),
+        created_at: new Date().toISOString()
+      });
+      return true;
+    }
+  } catch (e) {
+    console.error('Erreur like:', e);
     return false;
-  } else {
-    await saveToStore(STORE_LIKES, {
-      videoId: videoId, userId: getUserId(),
-      created_at: new Date().toISOString()
-    });
-    return true;
   }
 }
 
 /* ========== COMMENTAIRES ========== */
 async function getCommentsForVideo(videoId) {
-  const comments = await getAllFromStore(STORE_COMMENTS);
-  return comments.filter(c => c.videoId === videoId).sort((a, b) => a.id - b.id);
+  try {
+    const comments = await getAllFromStore(STORE_COMMENTS);
+    return comments.filter(c => c.videoId === videoId).sort((a, b) => a.id - b.id);
+  } catch (e) {
+    console.error('Erreur chargement commentaires:', e);
+    return [];
+  }
 }
 
 async function addComment(videoId, text) {
   if (!text || !text.trim()) return false;
-  const profile = getProfile();
-  await saveToStore(STORE_COMMENTS, {
-    videoId: videoId,
-    userId: getUserId(),
-    userName: profile.name || 'Anonyme',
-    text: text.trim(),
-    created_at: new Date().toISOString()
-  });
-  return true;
+  try {
+    const profile = getProfile();
+    await saveToStore(STORE_COMMENTS, {
+      videoId: videoId,
+      userId: getUserId(),
+      userName: profile.name || 'Anonyme',
+      text: text.trim(),
+      created_at: new Date().toISOString()
+    });
+    return true;
+  } catch (e) {
+    console.error('Erreur commentaire:', e);
+    return false;
+  }
 }
 
 let currentCommentVideoId = null;
@@ -876,27 +957,34 @@ function closeCommentModal() {
 async function renderComments(videoId) {
   const list = document.getElementById('comments-list');
   const countEl = document.getElementById('comments-count');
-  const comments = await getCommentsForVideo(videoId);
+  if (!list || !countEl) return;
 
-  countEl.textContent = comments.length + ' commentaire' + (comments.length !== 1 ? 's' : '');
+  try {
+    const comments = await getCommentsForVideo(videoId);
 
-  if (comments.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:32px 16px;color:#71717a;font-size:13px;"><i class="fas fa-comment-slash" style="font-size:24px;margin-bottom:8px;display:block;"></i>Aucun commentaire</div>';
-    return;
+    countEl.textContent = comments.length + ' commentaire' + (comments.length !== 1 ? 's' : '');
+
+    if (comments.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:32px 16px;color:#71717a;font-size:13px;"><i class="fas fa-comment-slash" style="font-size:24px;margin-bottom:8px;display:block;"></i>Aucun commentaire</div>';
+      return;
+    }
+
+    let html = '';
+    comments.forEach(c => {
+      const date = new Date(c.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+      html += '<div style="padding:10px 0;border-bottom:1px solid #27272a;">';
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">';
+      html += '<span style="font-weight:600;font-size:12px;color:#34d399;">@' + escapeHtml(c.userName) + '</span>';
+      html += '<span style="font-size:10px;color:#71717a;">' + date + '</span>';
+      html += '</div>';
+      html += '<div style="font-size:13px;color:#d4d4d8;line-height:1.4;">' + escapeHtml(c.text) + '</div>';
+      html += '</div>';
+    });
+    list.innerHTML = html;
+  } catch (e) {
+    console.error('Erreur affichage commentaires:', e);
+    list.innerHTML = '<div style="text-align:center;padding:32px 16px;color:#71717a;font-size:13px;">Erreur de chargement</div>';
   }
-
-  let html = '';
-  comments.forEach(c => {
-    const date = new Date(c.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-    html += '<div style="padding:10px 0;border-bottom:1px solid #27272a;">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">';
-    html += '<span style="font-weight:600;font-size:12px;color:#34d399;">@' + escapeHtml(c.userName) + '</span>';
-    html += '<span style="font-size:10px;color:#71717a;">' + date + '</span>';
-    html += '</div>';
-    html += '<div style="font-size:13px;color:#d4d4d8;line-height:1.4;">' + escapeHtml(c.text) + '</div>';
-    html += '</div>';
-  });
-  list.innerHTML = html;
 }
 
 async function submitComment() {
@@ -904,18 +992,22 @@ async function submitComment() {
   const text = input.value.trim();
   if (!text || !currentCommentVideoId) return;
 
-  await addComment(currentCommentVideoId, text);
-  input.value = '';
-  await renderComments(currentCommentVideoId);
+  try {
+    await addComment(currentCommentVideoId, text);
+    input.value = '';
+    await renderComments(currentCommentVideoId);
 
-  const comments = await getCommentsForVideo(currentCommentVideoId);
-  const countSpan = document.getElementById('comment-count-' + currentCommentVideoId);
-  if (countSpan) countSpan.textContent = comments.length;
+    const comments = await getCommentsForVideo(currentCommentVideoId);
+    const countSpan = document.getElementById('comment-count-' + currentCommentVideoId);
+    if (countSpan) countSpan.textContent = comments.length;
+  } catch (err) {
+    console.error('Erreur commentaire:', err);
+  }
 }
 
 /* ========== STATE ========== */
 let isPremium = localStorage.getItem('beubeuland_premium') === 'true';
-let uploadsToday = parseInt(localStorage.getItem('beubeuland_uploads_today') || '0');
+let uploadsToday = parseInt(localStorage.getItem('beubeuland_uploads_today') || '0', 10) || 0;
 let currentObjectUrls = [];
 let feedObserver = null;
 let userProfile = JSON.parse(localStorage.getItem('beubeuland_profile') || '{}');
@@ -966,7 +1058,8 @@ function showSection(section) {
   });
   const target = document.getElementById('section-' + section);
   if (target) {
-    target.style.display = 'block';
+    // Feed needs flex display, others use block
+    target.style.display = (section === 'feed') ? 'flex' : 'block';
     target.classList.remove('hidden');
   }
   document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
@@ -1002,13 +1095,14 @@ function saveProfile() {
   if (avatarInput.files.length) {
     const reader = new FileReader();
     reader.onload = (e) => { saveProfileData({ name, bio, avatar: e.target.result }); closeProfileEdit(); };
+    reader.onerror = () => { saveProfileData({ name, bio }); closeProfileEdit(); };
     reader.readAsDataURL(avatarInput.files[0]);
   } else { saveProfileData({ name, bio }); closeProfileEdit(); }
 }
 
 /* ========== FORMAT ========== */
 function formatTime(seconds) {
-  if (!seconds || isNaN(seconds) || !isFinite(seconds)) return '0:00';
+  if (!seconds || isNaN(seconds) || !isFinite(seconds) || seconds < 0) return '0:00';
   const m = Math.floor(seconds / 60);
   const s = Math.floor(seconds % 60);
   return m + ':' + (s < 10 ? '0' : '') + s;
@@ -1051,7 +1145,7 @@ async function loadVideos() {
     const videoEl = document.createElement('video');
     videoEl.className = 'video-player';
     videoEl.loop = true; videoEl.playsInline = true; videoEl.preload = 'metadata';
-    videoEl.muted = false; videoEl.volume = 0.8;
+    videoEl.muted = true; videoEl.volume = 0.8;
     if (video.fileData && video.fileData.byteLength > 0) {
       try {
         const blob = new Blob([video.fileData], { type: video.fileType || 'video/mp4' });
@@ -1139,7 +1233,7 @@ async function handleLike(btn, videoId) {
   const isLiked = await toggleLike(videoId);
   const countEl = document.getElementById('like-count-' + videoId);
   const likes = await getLikesForVideo(videoId);
-  countEl.textContent = likes.length;
+  if (countEl) countEl.textContent = likes.length;
   if (isLiked) btn.classList.add('liked');
   else btn.classList.remove('liked');
 }
@@ -1151,9 +1245,19 @@ function setupVideoControls(video, id, loader, bigPlay) {
     loader.classList.remove('visible');
     bigPlay.classList.add('visible');
     bigPlay.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+    bigPlay.title = 'Cliquez pour réessayer';
+    bigPlay.onclick = function() {
+      video.load();
+      video.play().catch(()=>{});
+      bigPlay.innerHTML = '<i class="fas fa-play"></i>';
+      bigPlay.onclick = null;
+    };
   });
 
   video.addEventListener('stalled', () => {
+    loader.classList.add('visible');
+  });
+  video.addEventListener('suspend', () => {
     loader.classList.add('visible');
   });
 
@@ -1172,18 +1276,32 @@ function setupVideoControls(video, id, loader, bigPlay) {
   video.addEventListener('canplay', () => loader.classList.remove('visible'));
   video.addEventListener('canplaythrough', () => loader.classList.remove('visible'));
 
-  function togglePlay() { if (video.paused) video.play().catch(()=>{}); else video.pause(); }
-  playBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlay(); });
+  function togglePlay() {
+    if (video.paused) {
+      video.play().catch(()=>{});
+    } else {
+      video.pause();
+    }
+  }
+  playBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (video.muted) video.muted = false;
+    togglePlay();
+  });
   video.addEventListener('play', () => { playBtn.innerHTML = '<i class="fas fa-pause"></i>'; bigPlay.classList.remove('visible'); bigPlay.innerHTML = '<i class="fas fa-pause"></i>'; });
   video.addEventListener('pause', () => { playBtn.innerHTML = '<i class="fas fa-play"></i>'; bigPlay.classList.add('visible'); bigPlay.innerHTML = '<i class="fas fa-play"></i>'; });
-  video.addEventListener('click', togglePlay);
+  video.addEventListener('click', () => {
+    if (video.muted) video.muted = false;
+    togglePlay();
+  });
 
   if (backBtn) backBtn.addEventListener('click', (e) => { e.stopPropagation(); video.currentTime = Math.max(0, video.currentTime - 10); });
   if (fwdBtn) fwdBtn.addEventListener('click', (e) => { e.stopPropagation(); video.currentTime = Math.min(video.duration || 0, video.currentTime + 10); });
 
   video.addEventListener('timeupdate', () => {
-    if (video.duration && isFinite(video.duration)) {
-      progFill.style.width = ((video.currentTime / video.duration) * 100) + '%';
+    if (video.duration && isFinite(video.duration) && video.duration > 0) {
+      const pct = Math.max(0, Math.min(100, (video.currentTime / video.duration) * 100));
+      progFill.style.width = pct + '%';
       timeDisplay.textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
     }
   });
@@ -1192,7 +1310,10 @@ function setupVideoControls(video, id, loader, bigPlay) {
     progContainer.addEventListener('click', (e) => {
       e.stopPropagation();
       const rect = progContainer.getBoundingClientRect();
-      if (video.duration && isFinite(video.duration)) video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
+      if (video.duration && isFinite(video.duration) && video.duration > 0) {
+        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        video.currentTime = pct * video.duration;
+      }
     });
   }
 
@@ -1208,7 +1329,7 @@ function setupVideoControls(video, id, loader, bigPlay) {
     });
   }
 
-  video.addEventListener('loadedmetadata', () => { timeDisplay.textContent = '0:00 / ' + formatTime(video.duration); });
+  video.addEventListener('loadedmetadata', () => { timeDisplay.textContent = '0:00 / ' + formatTime(video.duration || 0); });
 }
 
 function updateVolumeIcon(vol, btn) {
@@ -1219,7 +1340,7 @@ function updateVolumeIcon(vol, btn) {
 }
 
 function toggleFullscreen(video) {
-  var elem = video;
+  var elem = video.parentElement || video;
 
   function enterFs(el) {
     if (el.requestFullscreen) return el.requestFullscreen();
@@ -1241,7 +1362,9 @@ function toggleFullscreen(video) {
       console.warn('Fullscreen error:', err);
     });
   } else {
-    exitFs();
+    exitFs().catch(function(err) {
+      console.warn('Exit fullscreen error:', err);
+    });
   }
 }
 
@@ -1249,7 +1372,7 @@ function updateFullscreenIcon() {
   var isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
   var btns = document.querySelectorAll('[id^="fullscreen-"]');
   for (var i = 0; i < btns.length; i++) {
-    btns[i].innerHTML = isFs ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand"></i>';
+    if (btns[i]) btns[i].innerHTML = isFs ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand"></i>';
   }
 }
 
@@ -1261,18 +1384,29 @@ document.addEventListener('MSFullscreenChange', updateFullscreenIcon);
 function setupAutoplayObserver() {
   const slides = document.querySelectorAll('.video-slide video');
   if (!slides.length) return;
+  if (feedObserver) feedObserver.disconnect();
   feedObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       const vid = entry.target;
-      if (entry.isIntersecting && entry.intersectionRatio >= 0.6) vid.play().catch(()=>{});
-      else vid.pause();
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+        vid.play().catch(()=>{});
+      } else {
+        vid.pause();
+      }
     });
-  }, { root: document.getElementById('tiktok-feed'), threshold: [0.6] });
+  }, { threshold: [0.5] });
   slides.forEach(vid => feedObserver.observe(vid));
 }
 
-function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
-function shareVideo(id) { navigator.clipboard.writeText('https://beubeuland.com/video/' + id); alert('Lien copié !'); }
+function escapeHtml(str) { if (str == null) return ''; const div = document.createElement('div'); div.textContent = String(str); return div.innerHTML; }
+function shareVideo(id) {
+  const url = 'https://beubeuland.com/video/' + id;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => alert('Lien copié !')).catch(() => alert(url));
+  } else {
+    alert(url);
+  }
+}
 
 /* ========== SUBSCRIPTION ========== */
 function updateProfileStatus() {
@@ -1317,8 +1451,13 @@ function activatePremium() {
 
 function cancelSubscription() {
   if (confirm("Annuler l'abonnement Premium ?")) {
-    isPremium = false; localStorage.setItem('beubeuland_premium', 'false');
-    saveUserProfile(getProfile()); updateProfileStatus(); updateNavVisibility();
+    isPremium = false;
+    localStorage.setItem('beubeuland_premium', 'false');
+    uploadsToday = 0;
+    localStorage.setItem('beubeuland_uploads_today', '0');
+    saveUserProfile(getProfile());
+    updateProfileStatus();
+    updateNavVisibility();
     showSection('feed');
   }
 }
@@ -1365,6 +1504,11 @@ async function verifyStripePayment() {
       body: JSON.stringify({ sessionId, userId })
     });
 
+    if (!res.ok) {
+      showDevToast('❌ Erreur serveur: ' + res.status);
+      return;
+    }
+
     const data = await res.json();
 
     if (data.success) {
@@ -1384,7 +1528,7 @@ async function activatePremiumSecure() {
   const token = sessionStorage.getItem('beubeuland_activation_token');
 
   if (!token) {
-    showDevToast('❌ Token d'activation manquant');
+    showDevToast("❌ Token d'activation manquant");
     return;
   }
 
@@ -1427,6 +1571,7 @@ function handleVideoUpload(input) {
   const file = input.files[0];
   const maxBytes = 500 * 1024 * 1024;
   if (file.size > maxBytes) { alert('Fichier trop volumineux (max 500MB)'); input.value = ''; return; }
+  if (!file.type.startsWith('video/')) { alert('Veuillez sélectionner un fichier vidéo'); input.value = ''; return; }
   document.getElementById('upload-dropzone').classList.add('hidden');
   document.getElementById('upload-form').classList.remove('hidden');
 }
@@ -1446,18 +1591,19 @@ async function publishVideo() {
   try {
     const arrayBuffer = await file.arrayBuffer();
     const profile = getProfile();
-    await saveVideo({ 
-      id: Date.now(), 
-      title: title, 
-      description: document.getElementById('video-desc').value, 
+    await saveVideo({
+      id: Date.now(),
+      title: title,
+      description: document.getElementById('video-desc').value,
       fileData: arrayBuffer,
       fileType: file.type,
       fileName: file.name,
-      authorId: getUserId(), 
-      authorName: profile.name, 
-      created_at: new Date().toISOString() 
+      authorId: getUserId(),
+      authorName: profile.name,
+      created_at: new Date().toISOString()
     });
-    uploadsToday++; localStorage.setItem('beubeuland_uploads_today', uploadsToday);
+    uploadsToday++;
+    localStorage.setItem('beubeuland_uploads_today', String(uploadsToday));
     alert('✅ Vidéo publiée !');
     document.getElementById('upload-form').classList.add('hidden');
     document.getElementById('upload-dropzone').classList.remove('hidden');
@@ -1466,9 +1612,11 @@ async function publishVideo() {
     input.value = '';
     showSection('feed');
   } catch (err) {
-    console.error('Erreur :', err); alert('❌ Erreur lors de la publication');
+    console.error('Erreur :', err);
+    alert('❌ Erreur lors de la publication: ' + (err.message || 'Inconnue'));
   } finally {
-    publishBtn.disabled = false; publishBtn.textContent = 'Publier la vidéo';
+    publishBtn.disabled = false;
+    publishBtn.textContent = 'Publier la vidéo';
     progressEl.classList.remove('visible');
   }
 }
@@ -1484,6 +1632,8 @@ function activateDevMode(showAlert) {
   isPremium = true;
   localStorage.setItem('beubeuland_premium', 'true');
   localStorage.setItem('beubeuland_devmode', 'true');
+  uploadsToday = 0;
+  localStorage.setItem('beubeuland_uploads_today', '0');
   updateNavVisibility();
   updateProfileStatus();
   const profileTab = document.getElementById('nav-profile');
@@ -1498,6 +1648,8 @@ function deactivateDevMode() {
   isPremium = false;
   localStorage.setItem('beubeuland_premium', 'false');
   localStorage.setItem('beubeuland_devmode', 'false');
+  uploadsToday = 0;
+  localStorage.setItem('beubeuland_uploads_today', '0');
   updateNavVisibility();
   updateProfileStatus();
   loadVideos();
@@ -1560,7 +1712,7 @@ async function init() {
   });
 
   const feedSection = document.getElementById('section-feed');
-  feedSection.style.display = 'block';
+  feedSection.style.display = 'flex';
   feedSection.classList.remove('hidden');
   document.getElementById('nav-feed').classList.add('active');
   updateProfileStatus();
@@ -1575,8 +1727,7 @@ async function cleanupCorruptedVideos() {
     const videos = await getAllFromStore(STORE_VIDEOS);
     let cleaned = 0;
     for (const v of videos) {
-      const hasValidData = (v.fileData && v.fileData.byteLength > 0) || 
-                          (v.fileBlob && v.fileBlob.size > 0);
+      const hasValidData = (v.fileData && v.fileData.byteLength > 0);
       if (!hasValidData && !v.isExternal) {
         await deleteFromStore(STORE_VIDEOS, v.id);
         cleaned++;
