@@ -12,7 +12,14 @@
         .tiktok-feed::-webkit-scrollbar { display: none; }
         .video-slide { scroll-snap-align: start; height: 100vh; max-height: 620px; width: 100%; position: relative; background: #000; }
         .video-player { width: 100%; height: 100%; max-height: 620px; object-fit: cover; background: #000; }
+        .video-overlay { background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.35) 100%); pointer-events: none; }
         .demo-container { max-width: 480px; margin: 0 auto; border: 12px solid #18181b; border-radius: 50px; overflow: hidden; }
+        .nav-tab { color: #a1a1aa; transition: all 0.15s ease; }
+        .nav-tab.active { background: #27272a; color: #fff; }
+        .action-btn { color: #fff; background: none; border: none; cursor: pointer; }
+        .action-btn i { transition: color 0.2s ease; }
+        #upload-progress { display: none; }
+        #upload-progress.visible { display: block; }
     </style>
 </head>
 <body class="bg-zinc-950 text-white">
@@ -38,7 +45,7 @@
     </div>
 
     <div class="max-w-[520px] mx-auto px-4">
-        
+
         <!-- FEED -->
         <div id="section-feed" class="section active">
             <div class="demo-container bg-black h-[620px] relative overflow-hidden rounded-[50px]">
@@ -54,16 +61,16 @@
                 </div>
 
                 <div class="tiktok-feed pt-12" id="tiktok-feed"></div>
-                
+
                 <div id="limit-overlay" onclick="showSection('subscription')" class="hidden absolute inset-0 bg-black/95 z-40 flex items-center justify-center">
                     <div class="text-center px-8">
                         <i class="fas fa-lock text-5xl mb-4 text-white/60"></i>
                         <div class="font-bold text-2xl">Limite atteinte</div>
                         <p class="text-sm mt-3 text-white/70">Passez en Premium pour tout débloquer</p>
-                        <div class="mt-6 px-8 py-3 bg-white text-black text-sm font-semibold rounded-2xl inline-block">S’abonner • 3,99 €</div>
+                        <div class="mt-6 px-8 py-3 bg-white text-black text-sm font-semibold rounded-2xl inline-block">S'abonner • 3,99 €</div>
                     </div>
                 </div>
-                
+
                 <!-- Floating Discord Button -->
                 <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-50">
                     <a href="https://discord.gg/a2HexAGYK" target="_blank" class="flex items-center gap-2.5 px-6 py-3 bg-[#5865F2] hover:bg-[#4752C4] text-white text-sm font-semibold rounded-2xl shadow-xl">
@@ -83,22 +90,23 @@
                     </div>
                     <h2 class="text-2xl font-bold">Beubeuland</h2>
                     <p class="text-zinc-400 text-sm">demo@beubeuland.com</p>
-                    
+
                     <div id="profile-status" class="mt-5 px-5 py-1.5 bg-emerald-950 text-emerald-400 text-sm font-medium rounded-full flex items-center gap-2 border border-emerald-900">
                         <i class="fas fa-check-circle"></i> <span>Abonnement Premium actif</span>
                     </div>
                 </div>
-                
+
                 <div class="grid grid-cols-3 gap-4 mt-10 text-center">
                     <div><div class="font-bold text-3xl">42</div><div class="text-xs text-zinc-500">Vidéos</div></div>
                     <div><div class="font-bold text-3xl">12.4k</div><div class="text-xs text-zinc-500">Abonnés</div></div>
                     <div><div class="font-bold text-3xl">87k</div><div class="text-xs text-zinc-500">Likes</div></div>
                 </div>
-                
+
                 <div class="mt-8 space-y-3">
+                    <button id="subscribe-btn-profile" onclick="subscribeFromProfile()" class="w-full py-3.5 bg-white text-black rounded-2xl text-sm font-semibold" style="display:none;">S'abonner</button>
                     <button onclick="showSection('subscription')" class="w-full py-3.5 bg-zinc-800 rounded-2xl text-sm font-medium">Gérer mon abonnement</button>
                     <button onclick="showSection('upload')" class="w-full py-3.5 bg-emerald-950 text-emerald-400 rounded-2xl text-sm font-medium">Publier une vidéo (Premium)</button>
-                    
+
                     <a href="https://discord.gg/a2HexAGYK" target="_blank" class="w-full flex items-center justify-center gap-2 py-3.5 bg-[#5865F2] hover:bg-[#4752C4] rounded-2xl text-sm font-semibold">
                         <i class="fab fa-discord"></i> Rejoins la communauté
                     </a>
@@ -114,7 +122,7 @@
                     <div class="text-5xl font-bold mt-2">3,99 €</div>
                     <div class="text-zinc-400">par mois</div>
                 </div>
-                
+
                 <div class="bg-zinc-950 rounded-2xl p-5 mb-6">
                     <div class="flex justify-between items-center">
                         <div>
@@ -123,10 +131,11 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="space-y-3">
-                    <button onclick="subscribeUser()" class="w-full py-4 bg-white text-black font-semibold rounded-2xl">S’abonner maintenant</button>
-                    
+                    <button onclick="subscribeUser()" class="w-full py-4 bg-white text-black font-semibold rounded-2xl">S'abonner maintenant</button>
+                    <button onclick="cancelSubscription()" class="w-full py-3.5 bg-zinc-800 text-zinc-300 text-sm font-medium rounded-2xl">Annuler mon abonnement</button>
+
                     <a href="https://discord.gg/a2HexAGYK" target="_blank" class="w-full flex items-center justify-center gap-2 py-3.5 bg-[#5865F2] hover:bg-[#4752C4] rounded-2xl text-sm font-semibold">
                         <i class="fab fa-discord"></i> Rejoins sur Discord
                     </a>
@@ -139,103 +148,192 @@
             <div class="bg-zinc-900 rounded-3xl p-6">
                 <div class="mb-6">
                     <div class="font-bold text-xl">Publier une vidéo</div>
-                    <div class="text-emerald-400 text-sm">Premium • <span id="upload-count">0</span>/3 aujourd’hui</div>
+                    <div class="text-emerald-400 text-sm">Premium • <span id="upload-count">0</span>/3 aujourd'hui</div>
                 </div>
-                
+
                 <div id="upload-dropzone" onclick="document.getElementById('upload-input').click()" class="border-2 border-dashed border-zinc-700 rounded-3xl p-9 text-center cursor-pointer">
                     <i class="fas fa-cloud-upload-alt text-4xl text-zinc-400 mb-4"></i>
                     <div class="font-medium">Glissez ou cliquez pour uploader</div>
                     <div class="text-xs text-zinc-500">MP4 • MOV • Max 500MB</div>
                 </div>
-                
+
                 <input type="file" id="upload-input" accept="video/*" class="hidden" onchange="handleVideoUpload(this)">
-                
+
                 <div id="upload-form" class="hidden space-y-4">
                     <input type="text" id="video-title" placeholder="Titre *" class="w-full px-5 py-4 bg-zinc-950 border border-zinc-800 rounded-2xl text-lg">
                     <textarea id="video-desc" placeholder="Description" rows="3" class="w-full px-5 py-4 bg-zinc-950 border border-zinc-800 rounded-2xl"></textarea>
-                    <button onclick="publishVideo()" class="w-full py-4 bg-emerald-600 rounded-2xl font-semibold">Publier la vidéo</button>
+                    <div id="upload-progress" class="text-xs text-zinc-400"></div>
+                    <button id="publish-btn" onclick="publishVideo()" class="w-full py-4 bg-emerald-600 rounded-2xl font-semibold">Publier la vidéo</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        function getVideos() {
-            return JSON.parse(localStorage.getItem('beubeuland_videos') || '[]');
+        /* ============================================================
+           STOCKAGE VIDÉO — IndexedDB (remplace localStorage)
+           localStorage est limité à ~5-10 Mo par domaine : une vidéo,
+           même courte, dépasse largement cette limite une fois encodée
+           en base64. IndexedDB stocke les Blob directement et supporte
+           des centaines de Mo sans problème.
+           ============================================================ */
+        const DB_NAME = 'beubeuland_db';
+        const DB_VERSION = 1;
+        const STORE_VIDEOS = 'videos';
+
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, DB_VERSION);
+                req.onupgradeneeded = () => {
+                    const db = req.result;
+                    if (!db.objectStoreNames.contains(STORE_VIDEOS)) {
+                        db.createObjectStore(STORE_VIDEOS, { keyPath: 'id' });
+                    }
+                };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
         }
 
-        function saveVideos(videos) {
-            localStorage.setItem('beubeuland_videos', JSON.stringify(videos));
+        async function saveVideo(video) {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_VIDEOS, 'readwrite');
+                tx.objectStore(STORE_VIDEOS).put(video);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
         }
 
+        async function getVideos() {
+            const db = await openDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_VIDEOS, 'readonly');
+                const req = tx.objectStore(STORE_VIDEOS).getAll();
+                req.onsuccess = () => {
+                    const videos = req.result || [];
+                    videos.sort((a, b) => b.id - a.id);
+                    resolve(videos);
+                };
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        /* ============================================================
+           ÉTAT DE L'APPLICATION
+           ============================================================ */
         let isPremium = localStorage.getItem('beubeuland_premium') === 'true';
         let uploadsToday = parseInt(localStorage.getItem('beubeuland_uploads_today') || '0');
+        let currentObjectUrls = []; // pour révoquer les blob: URLs et éviter les fuites mémoire
+        let feedObserver = null;
 
-        function loadVideos() {
+        async function loadVideos() {
             const feed = document.getElementById('tiktok-feed');
             feed.innerHTML = '';
 
-            const videos = getVideos();
+            // Nettoyage des anciennes object URLs avant de recharger
+            currentObjectUrls.forEach(url => URL.revokeObjectURL(url));
+            currentObjectUrls = [];
+            if (feedObserver) feedObserver.disconnect();
+
+            let videos = [];
+            try {
+                videos = await getVideos();
+            } catch (err) {
+                console.error('Erreur de chargement des vidéos :', err);
+                feed.innerHTML = `<div class="flex items-center justify-center h-full text-zinc-500 px-8 text-center">Erreur de chargement des vidéos</div>`;
+                return;
+            }
 
             if (videos.length === 0) {
                 feed.innerHTML = `<div class="flex items-center justify-center h-full text-zinc-500">Aucune vidéo pour le moment</div>`;
+                document.getElementById('limit-overlay').classList.add('hidden');
                 return;
             }
 
             const maxVideos = isPremium ? videos.length : 2;
+            const visibleVideos = videos.slice(0, maxVideos);
 
-            videos.slice(0, maxVideos).forEach((video) => {
+            visibleVideos.forEach((video) => {
                 const slide = document.createElement('div');
                 slide.className = 'video-slide relative';
-                
-                // Création correcte de la balise vidéo
+
                 const videoEl = document.createElement('video');
                 videoEl.className = 'video-player';
-                videoEl.controls = true;
-                videoEl.muted = true;
+                videoEl.muted = true; // requis par les navigateurs pour l'autoplay
                 videoEl.loop = true;
                 videoEl.playsInline = true;
                 videoEl.preload = 'metadata';
-                
-                if (video.fileData) {
-                    videoEl.src = video.fileData;
+
+                if (video.fileBlob) {
+                    const url = URL.createObjectURL(video.fileBlob);
+                    currentObjectUrls.push(url);
+                    videoEl.src = url;
                 } else {
                     videoEl.src = "https://assets.mixkit.co/videos/preview/4119/4119-small.mp4";
                 }
 
                 slide.innerHTML = `
-                    <div class="absolute inset-0 video-overlay"></div>
-                    <div class="absolute top-4 left-4 px-2.5 py-0.5 bg-red-600 text-[10px] font-bold rounded-full">18+</div>
-                    
+                    <div class="absolute inset-0 video-overlay z-10"></div>
+                    <div class="absolute top-4 left-4 px-2.5 py-0.5 bg-red-600 text-[10px] font-bold rounded-full z-20">18+</div>
+
                     <div class="absolute bottom-0 left-0 right-0 p-5 z-20">
-                        <div class="font-bold text-xl">${video.title}</div>
-                        <div class="text-sm text-zinc-300 mt-1">${video.description || ''}</div>
+                        <div class="font-bold text-xl">${escapeHtml(video.title)}</div>
+                        <div class="text-sm text-zinc-300 mt-1">${escapeHtml(video.description || '')}</div>
                     </div>
-                    
+
                     <div class="absolute right-4 bottom-24 flex flex-col items-center gap-6 z-30">
                         <button onclick="likeVideo(this)" class="action-btn flex flex-col items-center"><i class="fas fa-heart text-3xl"></i><span class="text-xs mt-1">124k</span></button>
                         <button onclick="openCommentModal(${video.id})" class="action-btn flex flex-col items-center"><i class="fas fa-comment text-3xl"></i><span class="text-xs mt-1">8.4k</span></button>
                         <button onclick="shareVideo(${video.id})" class="action-btn flex flex-col items-center"><i class="fas fa-share text-3xl"></i></button>
                     </div>
                 `;
-                
-                // Ajout de la vidéo
+
                 slide.appendChild(videoEl);
                 feed.appendChild(slide);
             });
 
             if (!isPremium && videos.length > 2) {
                 document.getElementById('limit-overlay').classList.remove('hidden');
+            } else {
+                document.getElementById('limit-overlay').classList.add('hidden');
             }
+
+            setupAutoplayObserver();
+        }
+
+        // Joue automatiquement la vidéo visible à l'écran, met en pause les autres
+        function setupAutoplayObserver() {
+            const slides = document.querySelectorAll('.video-slide video');
+            if (!slides.length) return;
+
+            feedObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const vid = entry.target;
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+                        vid.play().catch(() => {});
+                    } else {
+                        vid.pause();
+                    }
+                });
+            }, { root: document.getElementById('tiktok-feed'), threshold: [0.6] });
+
+            slides.forEach(vid => feedObserver.observe(vid));
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
         }
 
         function showSection(section) {
             document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
             document.getElementById('section-' + section).style.display = 'block';
-            
+
             document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
             document.getElementById('nav-' + section).classList.add('active');
-            
+
             if (section === 'feed') loadVideos();
             if (section === 'upload') updateUploadCount();
         }
@@ -279,7 +377,7 @@
 
         function subscribeFromProfile() { showSection('subscription'); }
         function cancelSubscription() {
-            if (confirm('Annuler l’abonnement ?')) {
+            if (confirm("Annuler l'abonnement ?")) {
                 isPremium = false;
                 localStorage.setItem('beubeuland_premium', 'false');
                 updateProfileStatus();
@@ -294,28 +392,45 @@
 
         function handleVideoUpload(input) {
             if (!input.files.length) return;
+
+            const file = input.files[0];
+
+            // Garde-fou taille (500MB annoncés dans l'UI)
+            const maxBytes = 500 * 1024 * 1024;
+            if (file.size > maxBytes) {
+                alert('Fichier trop volumineux (max 500MB)');
+                input.value = '';
+                return;
+            }
+
             document.getElementById('upload-dropzone').classList.add('hidden');
             document.getElementById('upload-form').classList.remove('hidden');
         }
 
-        function publishVideo() {
+        async function publishVideo() {
             const title = document.getElementById('video-title').value.trim();
             if (!title) { alert('Titre requis'); return; }
             if (uploadsToday >= 3) { alert('Limite atteinte'); return; }
 
-            const file = document.getElementById('upload-input').files[0];
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                const videos = getVideos();
-                videos.unshift({
+            const input = document.getElementById('upload-input');
+            const file = input.files[0];
+            if (!file) { alert('Aucun fichier sélectionné'); return; }
+
+            const publishBtn = document.getElementById('publish-btn');
+            const progressEl = document.getElementById('upload-progress');
+            publishBtn.disabled = true;
+            publishBtn.textContent = 'Publication en cours...';
+            progressEl.classList.add('visible');
+            progressEl.textContent = 'Enregistrement de la vidéo...';
+
+            try {
+                await saveVideo({
                     id: Date.now(),
                     title: title,
                     description: document.getElementById('video-desc').value,
-                    fileData: e.target.result,
+                    fileBlob: file, // Blob stocké directement, pas de conversion base64
                     created_at: new Date().toISOString()
                 });
-                saveVideos(videos);
 
                 uploadsToday++;
                 localStorage.setItem('beubeuland_uploads_today', uploadsToday);
@@ -324,9 +439,17 @@
                 document.getElementById('upload-form').classList.add('hidden');
                 document.getElementById('upload-dropzone').classList.remove('hidden');
                 document.getElementById('video-title').value = '';
+                document.getElementById('video-desc').value = '';
+                input.value = '';
                 showSection('feed');
-            };
-            reader.readAsDataURL(file);
+            } catch (err) {
+                console.error('Erreur de publication :', err);
+                alert('❌ Erreur lors de la publication de la vidéo');
+            } finally {
+                publishBtn.disabled = false;
+                publishBtn.textContent = 'Publier la vidéo';
+                progressEl.classList.remove('visible');
+            }
         }
 
         function init() {
@@ -334,14 +457,12 @@
                 localStorage.setItem('beubeuland_premium', 'false');
             }
 
+            document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
             document.getElementById('section-feed').style.display = 'block';
             document.getElementById('nav-feed').classList.add('active');
+
             updateProfileStatus();
             loadVideos();
-            
-            document.querySelectorAll('.section').forEach(el => {
-                if (el.id !== 'section-feed') el.style.display = 'none';
-            });
         }
 
         window.onload = init;
