@@ -205,6 +205,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #
 .hidden { display: none !important; }
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -459,11 +460,23 @@ async function publishAdminVideo() {
   const btn = document.getElementById('admin-publish-btn');
   const progressEl = document.getElementById('admin-progress');
   btn.disabled = true; btn.textContent = 'Publication en cours...';
-  progressEl.style.display = 'block'; progressEl.textContent = 'Enregistrement...';
+  progressEl.style.display = 'block'; progressEl.textContent = 'Lecture du fichier...';
+
   try {
+    // Convertir le fichier en ArrayBuffer (même format que le client)
+    const arrayBuffer = await file.arrayBuffer();
+    progressEl.textContent = 'Enregistrement...';
+
     await saveVideo({
-      id: Date.now(), title: title, description: document.getElementById('admin-desc').value,
-      fileBlob: file, authorId: 'admin', authorName: 'Admin', isAdmin: true,
+      id: Date.now(), 
+      title: title, 
+      description: document.getElementById('admin-desc').value,
+      fileData: arrayBuffer,
+      fileType: file.type,
+      fileName: file.name,
+      authorId: 'admin', 
+      authorName: 'Admin', 
+      isAdmin: true,
       created_at: new Date().toISOString()
     });
     alert('✅ Vidéo publiée avec succès !');
@@ -563,6 +576,7 @@ async function loadAllVideos() {
       <td style="white-space: nowrap;">${new Date(v.created_at).toLocaleDateString('fr-FR')}</td>
       <td>
         <div style="display: flex; gap: 6px;">
+          <button onclick="previewVideo(${v.id})" class="btn-icon btn-view" title="Voir la vidéo"><i class="fas fa-play"></i></button>
           ${v.authorId !== 'admin' ? `<button onclick="openWarningModal('${v.authorId}', '${escapeHtml(authorName)}')" class="btn-icon btn-warn" title="Avertir l'auteur"><i class="fas fa-exclamation-triangle"></i></button>` : ''}
           <button onclick="deleteAdminVideo(${v.id})" class="btn-icon btn-delete" title="Supprimer"><i class="fas fa-trash"></i></button>
         </div>
@@ -614,6 +628,7 @@ async function viewUserVideos(userId, userName) {
       <td style="white-space: nowrap;">${new Date(v.created_at).toLocaleDateString('fr-FR')}</td>
       <td>
         <div style="display: flex; gap: 6px;">
+          <button onclick="previewVideo(${v.id})" class="btn-icon btn-view" title="Voir la vidéo"><i class="fas fa-play"></i></button>
           <button onclick="openWarningModal('${v.authorId}', '${escapeHtml(userName)}')" class="btn-icon btn-warn" title="Avertir"><i class="fas fa-exclamation-triangle"></i></button>
           <button onclick="deleteAdminVideo(${v.id})" class="btn-icon btn-delete" title="Supprimer"><i class="fas fa-trash"></i></button>
         </div>
@@ -691,6 +706,49 @@ async function loadWarnings() {
   container.innerHTML = html;
 }
 
+
+async function previewVideo(videoId) {
+  const videos = await getAllFromStore(STORE_VIDEOS);
+  const video = videos.find(v => v.id === videoId);
+  if (!video) { alert('Vidéo introuvable'); return; }
+
+  const videoEl = document.getElementById('preview-video');
+
+  if (video.fileData) {
+    try {
+      const blob = new Blob([video.fileData], { type: video.fileType || 'video/mp4' });
+      const url = URL.createObjectURL(blob);
+      videoEl.src = url;
+    } catch (e) {
+      console.error('Erreur blob:', e);
+      alert('❌ Impossible de lire la vidéo');
+      return;
+    }
+  } else if (video.fileBlob) {
+    // Compatibilité avec anciennes vidéos (fileBlob)
+    try {
+      const url = URL.createObjectURL(video.fileBlob);
+      videoEl.src = url;
+    } catch (e) {
+      alert('❌ Format de vidéo incompatible');
+      return;
+    }
+  } else {
+    alert('❌ Aucune donnée vidéo');
+    return;
+  }
+
+  document.getElementById('video-preview-modal').classList.add('visible');
+  videoEl.play().catch(() => {});
+}
+
+function closeVideoPreview() {
+  const videoEl = document.getElementById('preview-video');
+  videoEl.pause();
+  videoEl.src = '';
+  document.getElementById('video-preview-modal').classList.remove('visible');
+}
+
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
@@ -703,5 +761,21 @@ window.onload = function() {
   updateStats();
 }
 </script>
+<!-- Video Preview Modal -->
+<div id="video-preview-modal" class="modal-overlay">
+  <div class="modal-box" style="max-width: 480px;">
+    <div class="modal-header">
+      <h3><i class="fas fa-play-circle text-emerald-400 mr-2"></i>Aperçu vidéo</h3>
+      <button onclick="closeVideoPreview()" class="modal-close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" style="padding: 0; background: #000;">
+      <video id="preview-video" style="width: 100%; max-height: 480px; display: block;" controls playsinline></video>
+    </div>
+    <div class="modal-footer">
+      <button onclick="closeVideoPreview()" class="modal-btn modal-btn-secondary">Fermer</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
