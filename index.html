@@ -8,29 +8,51 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 * { box-sizing: border-box; }
-body { font-family: 'Inter', system-ui, sans-serif; background: #09090b; color: #fafafa; margin: 0; overflow: hidden; height: 100vh; }
+body { 
+  font-family: 'Inter', system-ui, sans-serif; 
+  background: #09090b; 
+  color: #fafafa; 
+  margin: 0; 
+  overflow: hidden; 
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
 .tiktok-feed { 
   flex: 1;
   overflow-y: scroll; 
   scroll-snap-type: y mandatory; 
-  scrollbar-width: none; 
+  scrollbar-width: none;
+  position: relative;
 }
 .tiktok-feed::-webkit-scrollbar { display: none; }
+.tiktok-feed .video-slide {
+  scroll-snap-stop: always;
+}
 .video-slide { 
   scroll-snap-align: start; 
   height: 100%; 
+  min-height: 100%; 
   width: 100%; 
   position: relative; 
   background: #000; 
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 .video-slide .video-wrapper {
   flex: 1;
   position: relative;
   overflow: hidden;
   min-height: 0;
+  background: #000;
+}
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 .video-player { 
   width: 100%; 
@@ -159,29 +181,15 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #09090b; color: 
 .section.active { display: block; }
 
 /* Fullscreen styles */
-.video-slide:fullscreen {
-  display: flex;
-  flex-direction: column;
-  background: #000;
+:fullscreen video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
 }
-.video-slide:fullscreen .video-wrapper {
-  flex: 1;
-}
-.video-slide:fullscreen .video-controls {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
-  border-top: none;
-}
-.video-slide:-webkit-full-screen {
-  display: flex;
-  flex-direction: column;
-  background: #000;
-}
-.video-slide:-webkit-full-screen .video-wrapper {
-  flex: 1;
+:-webkit-full-screen video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
 }
 
 </style>
@@ -213,11 +221,11 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #09090b; color: 
   </div>
 </div>
 
-<div class="max-w-[520px] mx-auto px-4 pb-2 flex-1 flex flex-col overflow-hidden">
+<div class="max-w-[520px] mx-auto px-4 pb-2 flex-1 flex flex-col overflow-hidden" style="width: 100%;">
 
   <!-- FEED -->
   <div id="section-feed" class="section active">
-    <div class="demo-container bg-black" style="height: 85vh; max-height: 580px; min-height: 480px; position: relative; overflow: hidden; display: flex; flex-direction: column;">
+    <div class="demo-container bg-black" style="height: 80vh; max-height: 560px; min-height: 460px; position: relative; overflow: hidden; display: flex; flex-direction: column;">
       <div class="app-header">
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 bg-white rounded-full flex items-center justify-center select-none" style="cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation;">
@@ -238,7 +246,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #09090b; color: 
           <div class="font-bold text-2xl">Limite atteinte</div>
           <p class="text-sm mt-3 text-white/70">Passe Premium pour voir toutes les vidéos</p>
           <div class="mt-6">
-            <a href="https://buy.stripe.com/3cIfZgh0IbfIewH2smew80k" target="_blank" class="stripe-btn">
+            <a href="https://buy.stripe.com/test_28EdR839SdnQewH4Auew809" target="_blank" class="stripe-btn">
               <i class="fas fa-crown"></i> S'abonner • Débloquer tout
             </a>
           </div>
@@ -303,7 +311,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #09090b; color: 
         </div>
       </div>
       <div class="space-y-3">
-        <a href="https://buy.stripe.com/3cIfZgh0IbfIewH2smew80k" target="_blank" class="w-full flex items-center justify-center gap-2 py-4 bg-white text-black font-semibold rounded-2xl text-sm">
+        <a href="https://buy.stripe.com/test_28EdR839SdnQewH4Auew809" target="_blank" class="w-full flex items-center justify-center gap-2 py-4 bg-white text-black font-semibold rounded-2xl text-sm">
           <i class="fas fa-credit-card"></i> S'abonner maintenant
         </a>
         <button id="cancel-sub-btn" onclick="cancelSubscription()" class="w-full py-3.5 bg-zinc-800 text-zinc-300 text-sm font-medium rounded-2xl hidden">Annuler mon abonnement</button>
@@ -336,6 +344,41 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #09090b; color: 
     </div>
   </div>
 
+</div>
+
+<!-- Comment Modal -->
+<div id="comment-modal" class="profile-edit-modal">
+  <div class="profile-edit-box" style="max-width: 400px; max-height: 80vh; display: flex; flex-direction: column;">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-bold text-lg"><i class="fas fa-comments mr-2 text-emerald-400"></i>Commentaires</h3>
+      <button onclick="closeCommentModal()" class="text-zinc-400 hover:text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="comments-count" style="font-size:11px;color:#a1a1aa;margin-bottom:8px;">0 commentaire</div>
+    <div id="comments-list" style="flex:1;overflow-y:auto;min-height:0;margin-bottom:12px;"></div>
+    <div style="display:flex;gap:8px;border-top:1px solid #27272a;padding-top:12px;">
+      <input type="text" id="comment-input" placeholder="Ajouter un commentaire..." style="
+        flex:1;
+        padding:10px 14px;
+        background:#0f0f11;
+        border:1px solid #27272a;
+        border-radius:12px;
+        color:#fafafa;
+        font-size:14px;
+        outline:none;
+      " onkeydown="if(event.key==='Enter')submitComment()">
+      <button onclick="submitComment()" style="
+        padding:10px 16px;
+        background:#10b981;
+        border:none;
+        border-radius:12px;
+        color:#fff;
+        font-size:13px;
+        font-weight:600;
+        cursor:pointer;
+        flex-shrink:0;
+      "><i class="fas fa-paper-plane"></i></button>
+    </div>
+  </div>
 </div>
 
 <!-- Profile Edit Modal -->
@@ -372,6 +415,7 @@ const DB_VERSION = 2;
 const STORE_VIDEOS = 'videos';
 const STORE_USERS = 'users';
 const STORE_LIKES = 'likes';
+const STORE_COMMENTS = 'comments';
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -381,6 +425,7 @@ function openDB() {
       if (!db.objectStoreNames.contains(STORE_VIDEOS)) db.createObjectStore(STORE_VIDEOS, { keyPath: 'id' });
       if (!db.objectStoreNames.contains(STORE_USERS)) db.createObjectStore(STORE_USERS, { keyPath: 'userId' });
       if (!db.objectStoreNames.contains(STORE_LIKES)) db.createObjectStore(STORE_LIKES, { keyPath: 'id', autoIncrement: true });
+      if (!db.objectStoreNames.contains(STORE_COMMENTS)) db.createObjectStore(STORE_COMMENTS, { keyPath: 'id', autoIncrement: true });
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
@@ -486,6 +531,25 @@ async function toggleLike(videoId) {
     });
     return true;
   }
+}
+
+/* ========== COMMENTAIRES ========== */
+async function getCommentsForVideo(videoId) {
+  const comments = await getAllFromStore(STORE_COMMENTS);
+  return comments.filter(c => c.videoId === videoId).sort((a, b) => a.id - b.id);
+}
+
+async function addComment(videoId, text) {
+  if (!text || !text.trim()) return false;
+  const profile = getProfile();
+  await saveToStore(STORE_COMMENTS, {
+    videoId: videoId,
+    userId: getUserId(),
+    userName: profile.name || 'Anonyme',
+    text: text.trim(),
+    created_at: new Date().toISOString()
+  });
+  return true;
 }
 
 /* ========== STATE ========== */
@@ -689,7 +753,7 @@ async function loadVideos() {
         <i class="fas fa-heart text-2xl"></i><span class="text-[10px]" id="like-count-${video.id}">${likeCount}</span>
       </button>
       <button onclick="openCommentModal(${video.id})" class="action-btn flex flex-col items-center gap-0.5">
-        <i class="fas fa-comment text-2xl"></i><span class="text-[10px]">0</span>
+        <i class="fas fa-comment text-2xl"></i><span class="text-[10px]" id="comment-count-${video.id}">${await getCommentsForVideo(video.id).then(c => c.length)}</span>
       </button>
       <button onclick="shareVideo(${video.id})" class="action-btn flex flex-col items-center gap-0.5">
         <i class="fas fa-share text-2xl"></i>
@@ -799,19 +863,21 @@ function setupVideoControls(video, id, loader, bigPlay) {
 }
 
 function toggleFullscreen(video) {
-  const slide = video.closest('.video-slide');
-  const container = slide || video.parentElement;
   if (!document.fullscreenElement) {
-    if (container.requestFullscreen) {
-      container.requestFullscreen().catch(err => {
-        console.warn('Fullscreen error:', err);
-        // Fallback: fullscreen sur la vidéo elle-même
-        if (video.requestFullscreen) video.requestFullscreen();
+    // Essayer d'abord sur la vidéo elle-même
+    if (video.requestFullscreen) {
+      video.requestFullscreen().catch(function(err) {
+        console.warn('Video fullscreen failed:', err);
+        // Fallback: essayer sur le slide parent
+        var slide = video.closest('.video-slide');
+        if (slide && slide.requestFullscreen) {
+          slide.requestFullscreen();
+        }
       });
-    } else if (container.webkitRequestFullscreen) {
-      container.webkitRequestFullscreen();
-    } else if (container.msRequestFullscreen) {
-      container.msRequestFullscreen();
+    } else if (video.webkitRequestFullscreen) {
+      video.webkitRequestFullscreen();
+    } else if (video.msRequestFullscreen) {
+      video.msRequestFullscreen();
     }
   } else {
     if (document.exitFullscreen) document.exitFullscreen();
@@ -819,6 +885,22 @@ function toggleFullscreen(video) {
     else if (document.msExitFullscreen) document.msExitFullscreen();
   }
 }
+
+// Mettre à jour l'icône fullscreen quand on entre/sort
+document.addEventListener('fullscreenchange', function() {
+  var isFs = !!document.fullscreenElement;
+  var btns = document.querySelectorAll('[id^="fullscreen-"]');
+  btns.forEach(function(btn) {
+    btn.innerHTML = isFs ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand"></i>';
+  });
+});
+document.addEventListener('webkitfullscreenchange', function() {
+  var isFs = !!document.webkitFullscreenElement;
+  var btns = document.querySelectorAll('[id^="fullscreen-"]');
+  btns.forEach(function(btn) {
+    btn.innerHTML = isFs ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand"></i>';
+  });
+});
 
 function updateVolumeIcon(vol, btn) {
   if (!btn) return;
@@ -841,7 +923,60 @@ function setupAutoplayObserver() {
 }
 
 function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
-function openCommentModal(id) { alert('Commentaires pour vidéo #' + id); }
+let currentCommentVideoId = null;
+
+function openCommentModal(id) {
+  currentCommentVideoId = id;
+  renderComments(id);
+  document.getElementById('comment-modal').classList.add('visible');
+  document.getElementById('comment-input').focus();
+}
+
+function closeCommentModal() {
+  document.getElementById('comment-modal').classList.remove('visible');
+  currentCommentVideoId = null;
+}
+
+async function renderComments(videoId) {
+  const list = document.getElementById('comments-list');
+  const countEl = document.getElementById('comments-count');
+  const comments = await getCommentsForVideo(videoId);
+
+  countEl.textContent = comments.length + ' commentaire' + (comments.length !== 1 ? 's' : '');
+
+  if (comments.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:32px 16px;color:#71717a;font-size:13px;"><i class="fas fa-comment-slash" style="font-size:24px;margin-bottom:8px;display:block;"></i>Aucun commentaire</div>';
+    return;
+  }
+
+  let html = '';
+  comments.forEach(c => {
+    const date = new Date(c.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    html += '<div style="padding:10px 0;border-bottom:1px solid #27272a;">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">';
+    html += '<span style="font-weight:600;font-size:12px;color:#34d399;">@' + escapeHtml(c.userName) + '</span>';
+    html += '<span style="font-size:10px;color:#71717a;">' + date + '</span>';
+    html += '</div>';
+    html += '<div style="font-size:13px;color:#d4d4d8;line-height:1.4;">' + escapeHtml(c.text) + '</div>';
+    html += '</div>';
+  });
+  list.innerHTML = html;
+}
+
+async function submitComment() {
+  const input = document.getElementById('comment-input');
+  const text = input.value.trim();
+  if (!text || !currentCommentVideoId) return;
+
+  await addComment(currentCommentVideoId, text);
+  input.value = '';
+  await renderComments(currentCommentVideoId);
+
+  // Mettre à jour le compteur sur le bouton
+  const comments = await getCommentsForVideo(currentCommentVideoId);
+  const countSpan = document.getElementById('comment-count-' + currentCommentVideoId);
+  if (countSpan) countSpan.textContent = comments.length;
+}
 function shareVideo(id) { navigator.clipboard.writeText('https://beubeuland.com/video/' + id); alert('Lien copié !'); }
 
 /* ========== SUBSCRIPTION ========== */
@@ -1014,20 +1149,12 @@ async function init() {
   // Nettoyer les vidéos corrompues (sans données valides)
   await cleanupCorruptedVideos();
 
-  // Écouter les changements de plein écran pour mettre à jour les icônes
-  document.addEventListener('fullscreenchange', updateFullscreenIcons);
-  document.addEventListener('webkitfullscreenchange', updateFullscreenIcons);
-  document.addEventListener('msfullscreenchange', updateFullscreenIcons);
+
 
   loadVideos();
 }
 
-function updateFullscreenIcons() {
-  const isFullscreen = !!document.fullscreenElement;
-  document.querySelectorAll('[id^="fullscreen-"]').forEach(btn => {
-    btn.innerHTML = isFullscreen ? '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand"></i>';
-  });
-}
+
 
 async function cleanupCorruptedVideos() {
   try {
