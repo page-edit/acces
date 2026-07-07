@@ -47,7 +47,6 @@
                         <div class="w-6 h-6 bg-white rounded-full flex items-center justify-center"><span class="text-black text-xs font-black">B</span></div>
                         <span class="font-bold text-lg">beubeuland</span>
                     </div>
-                    <!-- Compact Discord -->
                     <a href="https://discord.gg/a2HexAGYK" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 bg-[#5865F2] hover:bg-[#4752C4] text-white text-xs font-semibold rounded-full">
                         <i class="fab fa-discord"></i>
                         <span>Discord</span>
@@ -75,7 +74,7 @@
             </div>
         </div>
 
-        <!-- PROFILE (Premium only) -->
+        <!-- PROFILE -->
         <div id="section-profile" class="section hidden">
             <div class="bg-zinc-900 rounded-3xl p-6">
                 <div class="flex flex-col items-center">
@@ -107,7 +106,7 @@
             </div>
         </div>
 
-        <!-- SUBSCRIPTION (Virgin - no one subscribed) -->
+        <!-- SUBSCRIPTION -->
         <div id="section-subscription" class="section hidden">
             <div class="bg-zinc-900 rounded-3xl p-6">
                 <div class="text-center mb-8">
@@ -135,7 +134,7 @@
             </div>
         </div>
 
-        <!-- UPLOAD (Premium only) -->
+        <!-- UPLOAD -->
         <div id="section-upload" class="section hidden">
             <div class="bg-zinc-900 rounded-3xl p-6">
                 <div class="mb-6">
@@ -191,8 +190,10 @@
                 
                 let videoHTML = '';
                 if (video.fileData) {
+                    // Vidéo uploadée (Admin ou Client Premium)
                     videoHTML = `<video class="video-player" controls muted loop playsinline><source src="${video.fileData}" type="video/mp4"></video>`;
                 } else {
+                    // Vidéo par défaut (si besoin)
                     videoHTML = `<video class="video-player" muted loop playsinline><source src="https://assets.mixkit.co/videos/preview/4119/4119-small.mp4" type="video/mp4"></video>`;
                 }
 
