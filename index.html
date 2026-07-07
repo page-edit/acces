@@ -21,20 +21,20 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 #upload-progress { display: none; }
 #upload-progress.visible { display: block; }
 
-/* === NOUVEAU : Contrôles vidéo custom === */
+/* === NOUVEAU : Contrôles vidéo === */
 .video-controls {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 25;
-  padding: 12px 16px 16px;
-  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 60%, transparent 100%);
+  padding: 10px 12px 14px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 60%, transparent 100%);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
   pointer-events: none;
 }
 .video-slide:hover .video-controls,
@@ -45,29 +45,28 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 .controls-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 .controls-row button {
   background: rgba(255,255,255,0.15);
   border: none;
   color: #fff;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: background 0.2s;
-  font-size: 14px;
+  font-size: 12px;
+  flex-shrink: 0;
 }
-.controls-row button:hover {
-  background: rgba(255,255,255,0.3);
-}
+.controls-row button:hover { background: rgba(255,255,255,0.35); }
 .progress-bar-container {
   flex: 1;
   height: 4px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.25);
   border-radius: 2px;
   cursor: pointer;
   position: relative;
@@ -77,54 +76,38 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   background: #fff;
   border-radius: 2px;
   width: 0%;
-  transition: width 0.1s linear;
-}
-.progress-bar-container:hover .progress-bar-fill::after {
-  content: '';
-  position: absolute;
-  right: -6px;
-  top: -4px;
-  width: 12px;
-  height: 12px;
-  background: #fff;
-  border-radius: 50%;
 }
 .time-display {
   font-size: 11px;
-  color: rgba(255,255,255,0.8);
-  min-width: 70px;
+  color: rgba(255,255,255,0.85);
+  min-width: 65px;
   text-align: right;
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
-.volume-btn {
-  position: relative;
-}
+.volume-btn { position: relative; }
 .volume-slider {
   position: absolute;
-  bottom: 45px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  width: 30px;
-  height: 80px;
-  background: rgba(0,0,0,0.8);
-  border-radius: 15px;
-  padding: 8px 0;
+  width: 28px;
+  height: 70px;
+  background: rgba(0,0,0,0.85);
+  border-radius: 14px;
+  padding: 6px 0;
   display: none;
   align-items: center;
   justify-content: center;
 }
-.volume-btn:hover .volume-slider,
-.volume-slider:hover {
-  display: flex;
-}
+.volume-btn:hover .volume-slider { display: flex; }
 .volume-slider input[type="range"] {
-  writing-mode: bt-lr;
   -webkit-appearance: slider-vertical;
-  width: 20px;
-  height: 60px;
+  width: 16px;
+  height: 55px;
 }
 
-/* === NOUVEAU : Loader / buffering indicator === */
+/* === Loader === */
 .video-loader {
   position: absolute;
   top: 50%;
@@ -133,45 +116,38 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   z-index: 15;
   display: none;
 }
-.video-loader.visible {
-  display: block;
-}
+.video-loader.visible { display: block; }
 .spinner {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border: 3px solid rgba(255,255,255,0.2);
   border-top-color: #fff;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.7s linear infinite;
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-/* === NOUVEAU : Big play/pause overlay === */
+/* === Big play overlay === */
 .big-play-btn {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.8);
+  transform: translate(-50%, -50%);
   z-index: 20;
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
   background: rgba(0,0,0,0.5);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 28px;
+  font-size: 24px;
   opacity: 0;
-  transition: all 0.2s ease;
+  transition: opacity 0.2s ease;
   pointer-events: none;
 }
-.big-play-btn.visible {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
-}
+.big-play-btn.visible { opacity: 1; }
 </style>
 <base target="_blank">
 </head>
@@ -363,7 +339,7 @@ let feedObserver = null;
    FORMAT TEMPS
 ============================================================ */
 function formatTime(seconds) {
-  if (!seconds || isNaN(seconds)) return '0:00';
+  if (!seconds || isNaN(seconds) || !isFinite(seconds)) return '0:00';
   const m = Math.floor(seconds / 60);
   const s = Math.floor(seconds % 60);
   return m + ':' + (s < 10 ? '0' : '') + s;
@@ -404,11 +380,8 @@ async function loadVideos() {
     videoEl.className = 'video-player';
     videoEl.loop = true;
     videoEl.playsInline = true;
-    videoEl.preload = 'auto'; // === OPTIMISATION : préchargement agressif ===
-    videoEl.muted = false;   // === SON ACTIVÉ ===
-
-    // === OPTIMISATION : buffer plus large ===
-    videoEl.setAttribute('preload', 'auto');
+    videoEl.preload = 'auto';     // === OPTIMISATION : préchargement ===
+    videoEl.muted = false;        // === SON ACTIVÉ ===
 
     if (video.fileBlob) {
       const url = URL.createObjectURL(video.fileBlob);
@@ -418,17 +391,17 @@ async function loadVideos() {
       videoEl.src = "https://assets.mixkit.co/videos/preview/4119/4119-small.mp4";
     }
 
-    // === NOUVEAU : Loader ===
+    // === Loader ===
     const loader = document.createElement('div');
     loader.className = 'video-loader';
     loader.innerHTML = '<div class="spinner"></div>';
 
-    // === NOUVEAU : Big play/pause overlay ===
+    // === Big play overlay ===
     const bigPlay = document.createElement('div');
     bigPlay.className = 'big-play-btn';
     bigPlay.innerHTML = '<i class="fas fa-play"></i>';
 
-    // === NOUVEAU : Contrôles custom ===
+    // === Contrôles custom ===
     const controls = document.createElement('div');
     controls.className = 'video-controls';
     controls.innerHTML = `
@@ -437,7 +410,7 @@ async function loadVideos() {
       </div>
       <div class="controls-row">
         <button id="play-${video.id}" title="Play/Pause"><i class="fas fa-pause"></i></button>
-        <button id="back-${video.id}" title="-10s"><i class="fas fa-undo-10"></i><i class="fas fa-undo"></i></button>
+        <button id="back-${video.id}" title="-10s"><i class="fas fa-undo"></i></button>
         <button id="fwd-${video.id}" title="+10s"><i class="fas fa-redo"></i></button>
         <div class="time-display" id="time-${video.id}">0:00 / 0:00</div>
         <div style="flex:1"></div>
@@ -450,27 +423,41 @@ async function loadVideos() {
       </div>
     `;
 
-    slide.innerHTML = `
-      <div class="absolute inset-0 video-overlay z-10"></div>
-      <div class="absolute top-4 left-4 px-2.5 py-0.5 bg-red-600 text-[10px] font-bold rounded-full z-20">18+</div>
-      <div class="absolute bottom-0 left-0 right-0 p-5 z-20 pb-24">
-        <div class="font-bold text-xl">${escapeHtml(video.title)}</div>
-        <div class="text-sm text-zinc-300 mt-1">${escapeHtml(video.description || '')}</div>
-      </div>
-      <div class="absolute right-4 bottom-24 flex flex-col items-center gap-6 z-30">
-        <button onclick="likeVideo(this)" class="action-btn flex flex-col items-center"><i class="fas fa-heart text-3xl"></i><span class="text-xs mt-1">124k</span></button>
-        <button onclick="openCommentModal(${video.id})" class="action-btn flex flex-col items-center"><i class="fas fa-comment text-3xl"></i><span class="text-xs mt-1">8.4k</span></button>
-        <button onclick="shareVideo(${video.id})" class="action-btn flex flex-col items-center"><i class="fas fa-share text-3xl"></i></button>
-      </div>
+    // === Contenu original de la slide ===
+    const overlay = document.createElement('div');
+    overlay.className = 'absolute inset-0 video-overlay z-10';
+
+    const badge = document.createElement('div');
+    badge.className = 'absolute top-4 left-4 px-2.5 py-0.5 bg-red-600 text-[10px] font-bold rounded-full z-20';
+    badge.textContent = '18+';
+
+    const info = document.createElement('div');
+    info.className = 'absolute bottom-0 left-0 right-0 p-5 z-20 pb-24';
+    info.innerHTML = `
+      <div class="font-bold text-xl">${escapeHtml(video.title)}</div>
+      <div class="text-sm text-zinc-300 mt-1">${escapeHtml(video.description || '')}</div>
     `;
 
+    const actions = document.createElement('div');
+    actions.className = 'absolute right-4 bottom-24 flex flex-col items-center gap-6 z-30';
+    actions.innerHTML = `
+      <button onclick="likeVideo(this)" class="action-btn flex flex-col items-center"><i class="fas fa-heart text-3xl"></i><span class="text-xs mt-1">124k</span></button>
+      <button onclick="openCommentModal(${video.id})" class="action-btn flex flex-col items-center"><i class="fas fa-comment text-3xl"></i><span class="text-xs mt-1">8.4k</span></button>
+      <button onclick="shareVideo(${video.id})" class="action-btn flex flex-col items-center"><i class="fas fa-share text-3xl"></i></button>
+    `;
+
+    // === Assemblage ===
     slide.appendChild(videoEl);
+    slide.appendChild(overlay);
+    slide.appendChild(badge);
+    slide.appendChild(info);
+    slide.appendChild(actions);
     slide.appendChild(loader);
     slide.appendChild(bigPlay);
     slide.appendChild(controls);
     feed.appendChild(slide);
 
-    /* === NOUVEAU : Gestion des événements vidéo === */
+    // === Setup contrôles ===
     setupVideoControls(videoEl, video.id, loader, bigPlay);
   });
 
@@ -484,7 +471,7 @@ async function loadVideos() {
 }
 
 /* ============================================================
-   NOUVEAU : CONTRÔLES VIDÉO (play/pause/seek/volume)
+   CONTRÔLES VIDÉO
 ============================================================ */
 function setupVideoControls(video, id, loader, bigPlay) {
   const playBtn = document.getElementById('play-' + id);
@@ -496,15 +483,18 @@ function setupVideoControls(video, id, loader, bigPlay) {
   const volBtn = document.getElementById('vol-' + id);
   const volRange = document.getElementById('vol-range-' + id);
 
-  // === Loader ===
+  if (!playBtn || !video) return;
+
+  // Loader
   video.addEventListener('waiting', () => loader.classList.add('visible'));
   video.addEventListener('playing', () => loader.classList.remove('visible'));
   video.addEventListener('canplay', () => loader.classList.remove('visible'));
+  video.addEventListener('canplaythrough', () => loader.classList.remove('visible'));
 
-  // === Play / Pause ===
+  // Play / Pause
   function togglePlay() {
     if (video.paused) {
-      video.play().catch(() => {});
+      video.play().catch(e => console.log('play error:', e));
     } else {
       video.pause();
     }
@@ -523,49 +513,71 @@ function setupVideoControls(video, id, loader, bigPlay) {
     bigPlay.innerHTML = '<i class="fas fa-play"></i>';
   });
 
-  // === Tap sur la vidéo = play/pause ===
+  // Tap sur la vidéo = play/pause
   video.addEventListener('click', togglePlay);
 
-  // === -10s / +10s ===
-  backBtn.addEventListener('click', (e) => { e.stopPropagation(); video.currentTime = Math.max(0, video.currentTime - 10); });
-  fwdBtn.addEventListener('click', (e) => { e.stopPropagation(); video.currentTime = Math.min(video.duration || 0, video.currentTime + 10); });
+  // -10s / +10s
+  if (backBtn) {
+    backBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      video.currentTime = Math.max(0, video.currentTime - 10);
+    });
+  }
+  if (fwdBtn) {
+    fwdBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const dur = video.duration || 0;
+      video.currentTime = Math.min(dur, video.currentTime + 10);
+    });
+  }
 
-  // === Barre de progression ===
+  // Barre de progression
   video.addEventListener('timeupdate', () => {
-    if (video.duration) {
+    if (video.duration && isFinite(video.duration)) {
       const pct = (video.currentTime / video.duration) * 100;
       progFill.style.width = pct + '%';
       timeDisplay.textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
     }
   });
 
-  progContainer.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const rect = progContainer.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
-    if (video.duration) video.currentTime = pct * video.duration;
-  });
+  if (progContainer) {
+    progContainer.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const rect = progContainer.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      if (video.duration && isFinite(video.duration)) {
+        video.currentTime = pct * video.duration;
+      }
+    });
+  }
 
-  // === Volume ===
+  // Volume
   video.volume = 0.8;
-  volRange.addEventListener('input', (e) => {
-    video.volume = e.target.value / 100;
-    updateVolumeIcon(video.volume, volBtn);
-  });
-  volBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    video.muted = !video.muted;
-    updateVolumeIcon(video.muted ? 0 : video.volume, volBtn);
-  });
+  if (volRange) {
+    volRange.addEventListener('input', (e) => {
+      video.volume = e.target.value / 100;
+      video.muted = false;
+      updateVolumeIcon(video.volume, volBtn);
+    });
+  }
+  if (volBtn) {
+    volBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      video.muted = !video.muted;
+      updateVolumeIcon(video.muted ? 0 : video.volume, volBtn);
+    });
+  }
 
-  // === Chargement initial ===
+  // Chargement initial
   video.addEventListener('loadedmetadata', () => {
     timeDisplay.textContent = '0:00 / ' + formatTime(video.duration);
   });
 }
 
 function updateVolumeIcon(vol, btn) {
+  if (!btn) return;
   const icon = btn.querySelector('i');
+  if (!icon) return;
   if (vol === 0) icon.className = 'fas fa-volume-mute';
   else if (vol < 0.5) icon.className = 'fas fa-volume-down';
   else icon.className = 'fas fa-volume-up';
