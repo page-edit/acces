@@ -13,7 +13,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #09090b; color: 
 .tiktok-feed { height: 100vh; max-height: 640px; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
 .tiktok-feed::-webkit-scrollbar { display: none; }
 .video-slide { scroll-snap-align: start; height: 100vh; max-height: 640px; width: 100%; position: relative; background: #000; }
-.video-player { width: 100%; height: 100%; max-height: 640px; object-fit: cover; background: #000; }
+.video-player { width: 100%; height: 100%; max-height: 640px; object-fit: contain; background: #000; }
 .video-overlay { background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.35) 100%); pointer-events: none; }
 .demo-container { max-width: 420px; margin: 0 auto; border: 10px solid #18181b; border-radius: 40px; overflow: hidden; position: relative; }
 
@@ -551,9 +551,9 @@ async function loadVideos() {
 
     const videoEl = document.createElement('video');
     videoEl.className = 'video-player';
-    videoEl.loop = true; videoEl.playsInline = true; videoEl.preload = 'auto';
+    videoEl.loop = true; videoEl.playsInline = true; videoEl.preload = 'metadata';
     videoEl.muted = false; videoEl.volume = 0.8;
-    if (video.fileData) {
+    if (video.fileData && video.fileData.byteLength > 0) {
       try {
         const blob = new Blob([video.fileData], { type: video.fileType || 'video/mp4' });
         const url = URL.createObjectURL(blob);
@@ -561,10 +561,21 @@ async function loadVideos() {
         videoEl.src = url;
       } catch (e) {
         console.error('Erreur blob:', e);
-        videoEl.src = "https://assets.mixkit.co/videos/preview/4119/4119-small.mp4";
+        videoEl.src = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
       }
-    } else { 
-      videoEl.src = "https://assets.mixkit.co/videos/preview/4119/4119-small.mp4"; 
+    } else if (video.fileBlob && video.fileBlob.size > 0) {
+      // Compatibilité anciennes vidéos (si le File object a survécu)
+      try {
+        const url = URL.createObjectURL(video.fileBlob);
+        currentObjectUrls.push(url);
+        videoEl.src = url;
+      } catch (e) {
+        console.error('Erreur fileBlob:', e);
+        videoEl.src = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+      }
+    } else {
+      // Fallback: vidéo par défaut fiable
+      videoEl.src = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
     }
 
     const loader = document.createElement('div');
@@ -634,6 +645,18 @@ async function handleLike(btn, videoId) {
 
 /* ========== CONTROLS ========== */
 function setupVideoControls(video, id, loader, bigPlay) {
+  // Gestion des erreurs de chargement
+  video.addEventListener('error', () => {
+    console.warn('Erreur chargement vidéo, fallback...');
+    loader.classList.remove('visible');
+    bigPlay.classList.add('visible');
+    bigPlay.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+  });
+
+  video.addEventListener('stalled', () => {
+    loader.classList.add('visible');
+  });
+
   const playBtn = document.getElementById('play-' + id);
   const backBtn = document.getElementById('back-' + id);
   const fwdBtn = document.getElementById('fwd-' + id);
@@ -808,7 +831,30 @@ async function init() {
   feedSection.classList.remove('hidden');
   document.getElementById('nav-feed').classList.add('active');
   updateProfileStatus();
+
+  // Nettoyer les vidéos corrompues (sans données valides)
+  await cleanupCorruptedVideos();
+
   loadVideos();
+}
+
+async function cleanupCorruptedVideos() {
+  try {
+    const videos = await getAllFromStore(STORE_VIDEOS);
+    let cleaned = 0;
+    for (const v of videos) {
+      // Supprimer les vidéos sans données valides
+      const hasValidData = (v.fileData && v.fileData.byteLength > 0) || 
+                          (v.fileBlob && v.fileBlob.size > 0);
+      if (!hasValidData && !v.isExternal) {
+        await deleteFromStore(STORE_VIDEOS, v.id);
+        cleaned++;
+      }
+    }
+    if (cleaned > 0) console.log(cleaned + ' vidéo(s) corrompue(s) nettoyée(s)');
+  } catch (e) {
+    console.error('Erreur nettoyage:', e);
+  }
 }
 window.onload = init;
 </script>
