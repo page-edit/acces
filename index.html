@@ -3,322 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beubeuland • Client</title>
+    <title>Beubeuland • Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body { font-family: 'Inter', system_ui, sans-serif; }
-        .tiktok-feed { height: 100vh; max-height: 620px; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
-        .tiktok-feed::-webkit-scrollbar { display: none; }
-        .video-slide { scroll-snap-align: start; height: 100vh; max-height: 620px; width: 100%; position: relative; background: #000; }
-        .video-player { width: 100%; height: 100%; max-height: 620px; object-fit: cover; }
-        .demo-container { max-width: 480px; margin: 0 auto; border: 12px solid #18181b; border-radius: 50px; overflow: hidden; }
-    </style>
+    <style>body { font-family: 'Inter', system_ui, sans-serif; }</style>
 </head>
 <body class="bg-zinc-950 text-white">
-    <!-- Header -->
-    <div class="max-w-[520px] mx-auto px-4 pt-6 pb-4">
-        <div class="flex items-center justify-between">
+    <div class="max-w-6xl mx-auto p-6">
+        <div class="flex items-center justify-between mb-8">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-white rounded-2xl flex items-center justify-center"><span class="text-black font-black text-3xl tracking-[-2px]">B</span></div>
-                <span class="font-display text-3xl font-bold tracking-tighter">beubeuland</span>
-            </div>
-            <div class="px-3 py-1 bg-red-600 text-xs font-bold rounded-full">18+</div>
-        </div>
-    </div>
-
-    <!-- Navigation -->
-    <div class="max-w-[520px] mx-auto px-4 mb-4">
-        <div class="flex bg-zinc-900 rounded-3xl p-1 text-sm">
-            <button onclick="showSection('feed')" class="nav-tab flex-1 py-3 px-4 rounded-3xl font-medium active" id="nav-feed">Feed</button>
-            <button onclick="showSection('profile')" class="nav-tab flex-1 py-3 px-4 rounded-3xl font-medium hidden" id="nav-profile">Profil</button>
-            <button onclick="showSection('subscription')" class="nav-tab flex-1 py-3 px-4 rounded-3xl font-medium" id="nav-subscription">Abonnement</button>
-            <button onclick="showSection('upload')" class="nav-tab flex-1 py-3 px-4 rounded-3xl font-medium hidden" id="nav-upload">Upload</button>
-        </div>
-    </div>
-
-    <div class="max-w-[520px] mx-auto px-4">
-        
-        <!-- FEED -->
-        <div id="section-feed" class="section active">
-            <div class="demo-container bg-black h-[620px] relative overflow-hidden rounded-[50px]">
-                <div class="absolute top-0 left-0 right-0 z-50 bg-black/90 px-4 py-3 flex justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 bg-white rounded-full flex items-center justify-center"><span class="text-black text-xs font-black">B</span></div>
-                        <span class="font-bold text-lg">beubeuland</span>
-                    </div>
+                <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center">
+                    <span class="text-black font-black text-3xl tracking-[-2px]">B</span>
                 </div>
-
-                <div class="tiktok-feed pt-12" id="tiktok-feed"></div>
-                
-                <div id="limit-overlay" onclick="showSection('subscription')" class="hidden absolute inset-0 bg-black/95 z-40 flex items-center justify-center">
-                    <div class="text-center px-8">
-                        <i class="fas fa-lock text-5xl mb-4 text-white/60"></i>
-                        <div class="font-bold text-2xl">Limite atteinte</div>
-                        <p class="text-sm mt-3 text-white/70">Passez en Premium pour tout débloquer</p>
-                        <div class="mt-6 px-8 py-3 bg-white text-black text-sm font-semibold rounded-2xl inline-block">S’abonner • 3,99 €</div>
-                    </div>
+                <div>
+                    <span class="font-bold text-3xl tracking-tighter">beubeuland</span>
+                    <span class="text-xs px-2 py-1 bg-red-600 rounded-full ml-2">ADMIN</span>
                 </div>
             </div>
+            <a href="beubeuland-client.html" class="text-sm px-4 py-2 bg-zinc-800 rounded-2xl hover:bg-zinc-700 flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Retour à la plateforme client
+            </a>
         </div>
 
-        <!-- PROFILE (Premium only) -->
-        <div id="section-profile" class="section hidden">
-            <div class="bg-zinc-900 rounded-3xl p-6">
-                <div class="flex flex-col items-center">
-                    <div class="w-24 h-24 bg-gradient-to-br from-zinc-700 to-zinc-900 rounded-full flex items-center justify-center border-4 border-zinc-800 mb-4">
-                        <span class="text-6xl font-black tracking-[-3px]">B</span>
-                    </div>
-                    <h2 class="text-2xl font-bold">Beubeuland</h2>
-                    <p class="text-zinc-400 text-sm"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="caaeafa7a58aa8afbfa8afbfa6aba4aee4a9a5a7">[email&#160;protected]</a></p>
-                    
-                    <div id="profile-status" class="mt-5 px-5 py-1.5 bg-emerald-950 text-emerald-400 text-sm font-medium rounded-full flex items-center gap-2 border border-emerald-900">
-                        <i class="fas fa-check-circle"></i> <span>Abonnement Premium actif</span>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-3 gap-4 mt-10 text-center">
-                    <div><div class="font-bold text-3xl">42</div><div class="text-xs text-zinc-500">Vidéos</div></div>
-                    <div><div class="font-bold text-3xl">12.4k</div><div class="text-xs text-zinc-500">Abonnés</div></div>
-                    <div><div class="font-bold text-3xl">87k</div><div class="text-xs text-zinc-500">Likes</div></div>
-                </div>
-                
-                <div class="mt-8 space-y-3">
-                    <button onclick="showSection('subscription')" class="w-full py-3.5 bg-zinc-800 rounded-2xl text-sm font-medium">Gérer mon abonnement</button>
-                    <button onclick="showSection('upload')" class="w-full py-3.5 bg-emerald-950 text-emerald-400 rounded-2xl text-sm font-medium">Publier une vidéo (Premium)</button>
-                </div>
-            </div>
+        <h1 class="text-3xl font-bold mb-1">Panneau Admin</h1>
+        <p class="text-zinc-400 mb-8">Upload de vidéos (vraiment fonctionnel)</p>
+
+        <div class="flex gap-1 mb-6 bg-zinc-900 p-1 rounded-3xl w-fit">
+            <button onclick="showTab('upload')" class="admin-tab px-6 py-2 text-sm font-medium rounded-3xl active" id="tab-upload">Upload</button>
+            <button onclick="showTab('videos')" class="admin-tab px-6 py-2 text-sm font-medium rounded-3xl" id="tab-videos">Vidéos publiées</button>
         </div>
 
-        <!-- SUBSCRIPTION -->
-        <div id="section-subscription" class="section hidden">
-            <div class="bg-zinc-900 rounded-3xl p-6">
-                <div class="text-center mb-8">
-                    <div class="text-emerald-400 text-sm font-semibold">PREMIUM</div>
-                    <div class="text-5xl font-bold mt-2">3,99 €</div>
-                    <div class="text-zinc-400">par mois</div>
-                </div>
-                
-                <div class="bg-zinc-950 rounded-2xl p-5 mb-6">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <div class="font-semibold">Beubeuland Premium</div>
-                            <div class="text-xs text-emerald-400 mt-1">Actif jusqu’au 7 août 2026</div>
-                        </div>
-                        <div><div class="px-3 py-1 bg-emerald-900 text-emerald-400 text-xs rounded-full">ACTIF</div></div>
-                    </div>
-                </div>
-                
-                <div class="space-y-3">
-                    <button onclick="subscribeUser()" class="w-full py-4 bg-white text-black font-semibold rounded-2xl">S’abonner maintenant</button>
-                    <button onclick="cancelSubscription()" class="w-full py-4 text-red-400 text-sm font-medium">Annuler l’abonnement</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- UPLOAD (Premium only) -->
-        <div id="section-upload" class="section hidden">
-            <div class="bg-zinc-900 rounded-3xl p-6">
+        <!-- UPLOAD -->
+        <div id="admin-upload" class="tab-content">
+            <div class="bg-zinc-900 rounded-3xl p-6 max-w-2xl">
                 <div class="mb-6">
-                    <div class="font-bold text-xl">Publier une vidéo</div>
-                    <div class="text-emerald-400 text-sm">Premium • <span id="upload-count">0</span>/3 aujourd’hui</div>
+                    <div class="font-bold text-2xl">Uploader une vidéo</div>
+                    <div class="text-emerald-400 text-sm">Les vidéos s’affichent vraiment dans le feed client</div>
                 </div>
                 
-                <div id="upload-dropzone" onclick="document.getElementById('upload-input').click()" class="border-2 border-dashed border-zinc-700 rounded-3xl p-9 text-center cursor-pointer">
-                    <i class="fas fa-cloud-upload-alt text-4xl text-zinc-400 mb-4"></i>
-                    <div class="font-medium">Glissez ou cliquez pour uploader</div>
-                    <div class="text-xs text-zinc-500">MP4 • MOV • Max 500MB</div>
+                <div id="admin-dropzone" onclick="document.getElementById('admin-file').click()" 
+                     class="border-2 border-dashed border-zinc-700 hover:border-emerald-600 rounded-3xl p-10 text-center cursor-pointer mb-6">
+                    <i class="fas fa-cloud-upload-alt text-5xl text-zinc-400 mb-4"></i>
+                    <div class="font-semibold text-lg">Glissez votre vidéo ici</div>
                 </div>
                 
-                <input type="file" id="upload-input" accept="video/*" class="hidden" onchange="handleVideoUpload(this)">
+                <input type="file" id="admin-file" accept="video/*" class="hidden" onchange="handleAdminFile(this)">
                 
-                <div id="upload-form" class="hidden space-y-4">
-                    <input type="text" id="video-title" placeholder="Titre *" class="w-full px-5 py-4 bg-zinc-950 border border-zinc-800 rounded-2xl text-lg">
-                    <textarea id="video-desc" placeholder="Description" rows="3" class="w-full px-5 py-4 bg-zinc-950 border border-zinc-800 rounded-2xl"></textarea>
-                    <button onclick="publishVideo()" class="w-full py-4 bg-emerald-600 rounded-2xl font-semibold">Publier la vidéo</button>
+                <div id="admin-form" class="hidden space-y-4">
+                    <input type="text" id="admin-title" placeholder="Titre de la vidéo *" class="w-full px-5 py-4 bg-zinc-950 border border-zinc-800 rounded-2xl text-lg">
+                    <textarea id="admin-desc" placeholder="Description (optionnelle)" rows="3" class="w-full px-5 py-4 bg-zinc-950 border border-zinc-800 rounded-2xl"></textarea>
+                    
+                    <button onclick="publishAdminVideo()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 rounded-2xl font-semibold text-lg">
+                        Publier sur le feed client
+                    </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- VIDEOS -->
+        <div id="admin-videos" class="tab-content hidden">
+            <div class="bg-zinc-900 rounded-3xl p-6">
+                <div class="font-semibold mb-4">Vidéos publiées</div>
+                <div id="admin-video-list" class="space-y-3"></div>
             </div>
         </div>
     </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-        function getVideos() {
-            return JSON.parse(localStorage.getItem('beubeuland_videos') || '[]');
-        }
-
-        function saveVideos(videos) {
-            localStorage.setItem('beubeuland_videos', JSON.stringify(videos));
-        }
-
-        let isPremium = localStorage.getItem('beubeuland_premium') === 'true';
-        let uploadsToday = parseInt(localStorage.getItem('beubeuland_uploads_today') || '0');
-
-        function loadVideos() {
-            const feed = document.getElementById('tiktok-feed');
-            feed.innerHTML = '';
-
-            const videos = getVideos();
-
-            if (videos.length === 0) {
-                feed.innerHTML = `<div class="flex items-center justify-center h-full text-zinc-500">Aucune vidéo pour le moment</div>`;
-                return;
-            }
-
-            const maxVideos = isPremium ? videos.length : 2;
-
-            videos.slice(0, maxVideos).forEach((video) => {
-                const slide = document.createElement('div');
-                slide.className = 'video-slide relative';
-                
-                let videoHTML = '';
-                if (video.fileData) {
-                    videoHTML = `<video class="video-player" controls muted loop playsinline><source src="${video.fileData}" type="video/mp4"></video>`;
-                } else {
-                    videoHTML = `<video class="video-player" muted loop playsinline><source src="https://assets.mixkit.co/videos/preview/4119/4119-small.mp4" type="video/mp4"></video>`;
-                }
-
-                slide.innerHTML = `
-                    <div class="absolute inset-0 video-overlay"></div>
-                    <div class="absolute top-4 left-4 px-2.5 py-0.5 bg-red-600 text-[10px] font-bold rounded-full">18+</div>
-                    
-                    <div class="absolute bottom-0 left-0 right-0 p-5 z-20">
-                        <div class="font-bold text-xl">${video.title}</div>
-                        <div class="text-sm text-zinc-300 mt-1">${video.description || ''}</div>
-                    </div>
-                    
-                    <div class="absolute right-4 bottom-24 flex flex-col items-center gap-6 z-30">
-                        <button onclick="likeVideo(this)" class="action-btn flex flex-col items-center"><i class="fas fa-heart text-3xl"></i><span class="text-xs mt-1">124k</span></button>
-                        <button onclick="openCommentModal(${video.id})" class="action-btn flex flex-col items-center"><i class="fas fa-comment text-3xl"></i><span class="text-xs mt-1">8.4k</span></button>
-                        <button onclick="shareVideo(${video.id})" class="action-btn flex flex-col items-center"><i class="fas fa-share text-3xl"></i></button>
-                    </div>
-                    
-                    ${videoHTML}
-                `;
-                feed.appendChild(slide);
-            });
-
-            if (!isPremium && videos.length > 2) {
-                document.getElementById('limit-overlay').classList.remove('hidden');
-            }
-        }
-
-        function showSection(section) {
-            document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
-            document.getElementById('section-' + section).style.display = 'block';
+    <script>
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('admin-' + tab).classList.remove('hidden');
+            document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
             
-            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-            document.getElementById('nav-' + section).classList.add('active');
-            
-            if (section === 'feed') loadVideos();
-            if (section === 'upload') updateUploadCount();
+            if (tab === 'videos') loadAdminVideos();
         }
 
-        function likeVideo(element) {
-            const icon = element.querySelector('i');
-            if (icon) { icon.style.color = '#ef4444'; setTimeout(() => icon.style.color = '', 800); }
-        }
-
-        function openCommentModal(id) { alert('Commentaires pour vidéo #' + id); }
-        function shareVideo(id) { navigator.clipboard.writeText(`https://beubeuland.com/video/${id}`); alert('Lien copié !'); }
-
-        function updateProfileStatus() {
-            const status = document.getElementById('profile-status');
-            const btn = document.getElementById('subscribe-btn-profile');
-            const navProfile = document.getElementById('nav-profile');
-            const navUpload = document.getElementById('nav-upload');
-
-            if (isPremium) {
-                status.innerHTML = `<i class="fas fa-check-circle"></i> <span>Abonnement Premium actif</span>`;
-                if (btn) btn.style.display = 'none';
-                if (navProfile) navProfile.classList.remove('hidden');
-                if (navUpload) navUpload.classList.remove('hidden');
-            } else {
-                status.innerHTML = `<i class="fas fa-user"></i> <span>Compte gratuit</span>`;
-                if (btn) btn.style.display = 'block';
-                if (navProfile) navProfile.classList.add('hidden');
-                if (navUpload) navUpload.classList.add('hidden');
-            }
-        }
-
-        function subscribeUser() {
-            isPremium = true;
-            localStorage.setItem('beubeuland_premium', 'true');
-            uploadsToday = 0;
-            localStorage.setItem('beubeuland_uploads_today', '0');
-            updateProfileStatus();
-            alert('✅ Abonnement Premium activé !\n\nAvantages débloqués :\n- Bouton Profil\n- Upload de vidéos\n- Accès illimité');
-            showSection('profile');
-        }
-
-        function subscribeFromProfile() { showSection('subscription'); }
-        function cancelSubscription() {
-            if (confirm('Annuler l’abonnement ?')) {
-                isPremium = false;
-                localStorage.setItem('beubeuland_premium', 'false');
-                updateProfileStatus();
-                showSection('profile');
-            }
-        }
-
-        function updateUploadCount() {
-            const el = document.getElementById('upload-count');
-            if (el) el.innerText = uploadsToday;
-        }
-
-        function handleVideoUpload(input) {
+        function handleAdminFile(input) {
             if (!input.files.length) return;
-            document.getElementById('upload-dropzone').classList.add('hidden');
-            document.getElementById('upload-form').classList.remove('hidden');
+            document.getElementById('admin-dropzone').classList.add('hidden');
+            document.getElementById('admin-form').classList.remove('hidden');
+            
+            const titleInput = document.getElementById('admin-title');
+            if (titleInput && !titleInput.value) {
+                titleInput.value = input.files[0].name.split('.')[0];
+            }
         }
 
-        function publishVideo() {
-            const title = document.getElementById('video-title').value.trim();
+        function publishAdminVideo() {
+            const title = document.getElementById('admin-title').value.trim();
             if (!title) { alert('Titre requis'); return; }
-            if (uploadsToday >= 3) { alert('Limite atteinte'); return; }
 
-            const file = document.getElementById('upload-input').files[0];
-            const reader = new FileReader();
+            const fileInput = document.getElementById('admin-file');
+            const file = fileInput.files[0];
             
+            const reader = new FileReader();
             reader.onload = function(e) {
-                const videos = getVideos();
+                const videos = JSON.parse(localStorage.getItem('beubeuland_videos') || '[]');
+                
                 videos.unshift({
                     id: Date.now(),
                     title: title,
-                    description: document.getElementById('video-desc').value,
-                    fileData: e.target.result,
+                    description: document.getElementById('admin-desc').value,
+                    fileData: e.target.result,           // ← IMPORTANT : sauvegarde réelle de la vidéo
                     created_at: new Date().toISOString()
                 });
-                saveVideos(videos);
 
-                uploadsToday++;
-                localStorage.setItem('beubeuland_uploads_today', uploadsToday);
-
-                alert('✅ Vidéo publiée !');
-                document.getElementById('upload-form').classList.add('hidden');
-                document.getElementById('upload-dropzone').classList.remove('hidden');
-                document.getElementById('video-title').value = '';
-                showSection('feed');
+                localStorage.setItem('beubeuland_videos', JSON.stringify(videos));
+                
+                alert('✅ Vidéo publiée avec succès ! Elle apparaît dans le feed client.');
+                
+                document.getElementById('admin-form').classList.add('hidden');
+                document.getElementById('admin-dropzone').classList.remove('hidden');
+                document.getElementById('admin-title').value = '';
+                document.getElementById('admin-desc').value = '';
+                
+                if (!document.getElementById('admin-videos').classList.contains('hidden')) {
+                    loadAdminVideos();
+                }
             };
             reader.readAsDataURL(file);
         }
 
-        function init() {
-            if (localStorage.getItem('beubeuland_premium') === null) {
-                localStorage.setItem('beubeuland_premium', 'false');
-            }
-
-            document.getElementById('section-feed').style.display = 'block';
-            document.getElementById('nav-feed').classList.add('active');
-            updateProfileStatus();
-            loadVideos();
+        function loadAdminVideos() {
+            const container = document.getElementById('admin-video-list');
+            const videos = JSON.parse(localStorage.getItem('beubeuland_videos') || '[]');
             
-            document.querySelectorAll('.section').forEach(el => {
-                if (el.id !== 'section-feed') el.style.display = 'none';
-            });
+            if (videos.length === 0) {
+                container.innerHTML = '<div class="text-zinc-500 text-center py-4">Aucune vidéo publiée</div>';
+                return;
+            }
+            
+            container.innerHTML = videos.map(v => `
+                <div class="flex justify-between items-center bg-zinc-950 p-4 rounded-2xl">
+                    <div>
+                        <div class="font-medium">${v.title}</div>
+                        <div class="text-xs text-zinc-400">${new Date(v.created_at).toLocaleDateString()}</div>
+                    </div>
+                    <button onclick="deleteAdminVideo(${v.id}, this)" class="text-red-400 text-sm">Supprimer</button>
+                </div>
+            `).join('');
         }
 
-        window.onload = init;
+        function deleteAdminVideo(id, btn) {
+            if (!confirm('Supprimer cette vidéo ?')) return;
+            let videos = JSON.parse(localStorage.getItem('beubeuland_videos') || '[]');
+            videos = videos.filter(v => v.id !== id);
+            localStorage.setItem('beubeuland_videos', JSON.stringify(videos));
+            btn.closest('div').remove();
+        }
+
+        window.onload = function() {
+            document.getElementById('admin-upload').classList.remove('hidden');
+            document.getElementById('tab-upload').classList.add('active');
+        }
     </script>
 </body>
 </html>
-```
