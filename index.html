@@ -7,20 +7,28 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-body { font-family: 'Inter', system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { font-family: 'Inter', system-ui, sans-serif; background: #09090b; color: #fafafa; margin: 0; }
+
 .tiktok-feed { height: 100vh; max-height: 640px; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
 .tiktok-feed::-webkit-scrollbar { display: none; }
 .video-slide { scroll-snap-align: start; height: 100vh; max-height: 640px; width: 100%; position: relative; background: #000; }
 .video-player { width: 100%; height: 100%; max-height: 640px; object-fit: cover; background: #000; }
 .video-overlay { background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0.35) 100%); pointer-events: none; }
 .demo-container { max-width: 420px; margin: 0 auto; border: 10px solid #18181b; border-radius: 40px; overflow: hidden; position: relative; }
-.nav-tab { color: #a1a1aa; transition: all 0.15s ease; }
+
+.nav-tab { color: #a1a1aa; transition: all 0.15s ease; font-size: 13px; font-weight: 500; }
 .nav-tab.active { background: #27272a; color: #fff; }
+
 .action-btn { color: #fff; background: none; border: none; cursor: pointer; }
 .action-btn i { transition: color 0.2s ease; }
+.action-btn.liked i { color: #ef4444; }
+.action-btn.liked span { color: #ef4444; }
+
 #upload-progress { display: none; }
 #upload-progress.visible { display: block; }
 
+/* Video Controls */
 .video-controls {
   position: absolute; bottom: 0; left: 0; right: 0; z-index: 25;
   padding: 8px 10px 10px;
@@ -83,17 +91,27 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 .profile-edit-modal.visible { display: flex; }
 .profile-edit-box { background: #18181b; border-radius: 24px; padding: 24px; width: 100%; max-width: 400px; }
 
-.warning-banner {
-  background: #7c2d12; border: 1px solid #9a3412; color: #fdba74;
-  padding: 10px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 13px;
-  display: flex; align-items: center; gap: 8px;
+.limit-overlay {
+  position: absolute; inset: 0; background: rgba(0,0,0,0.92); z-index: 40;
+  display: flex; align-items: center; justify-content: center;
 }
-.warning-banner i { color: #f97316; }
+.limit-box { text-align: center; padding: 32px; }
+
+.stripe-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; background: #635bff; color: #fff;
+  font-size: 14px; font-weight: 600; border-radius: 14px;
+  text-decoration: none; transition: all 0.2s;
+}
+.stripe-btn:hover { background: #7c73ff; transform: translateY(-1px); }
+
+.hidden { display: none !important; }
 </style>
 <base target="_blank">
 </head>
-<body class="bg-zinc-950 text-white">
+<body>
 
+<!-- Header -->
 <div class="max-w-[520px] mx-auto px-4 pt-4 pb-3">
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-2">
@@ -106,12 +124,13 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   </div>
 </div>
 
+<!-- Navigation -->
 <div class="max-w-[520px] mx-auto px-4 mb-3">
-  <div class="flex bg-zinc-900 rounded-3xl p-1 text-sm">
-    <button onclick="showSection('feed')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl font-medium active" id="nav-feed">Feed</button>
-    <button onclick="showSection('profile')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl font-medium" id="nav-profile">Profil</button>
-    <button onclick="showSection('subscription')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl font-medium" id="nav-subscription">Premium</button>
-    <button onclick="showSection('upload')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl font-medium" id="nav-upload">Upload</button>
+  <div class="flex bg-zinc-900 rounded-3xl p-1 text-sm" id="nav-container">
+    <button onclick="showSection('feed')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl active" id="nav-feed">Feed</button>
+    <button onclick="showSection('profile')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl hidden" id="nav-profile">Profil</button>
+    <button onclick="showSection('subscription')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl" id="nav-subscription">Premium</button>
+    <button onclick="showSection('upload')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl hidden" id="nav-upload">Upload</button>
   </div>
 </div>
 
@@ -132,16 +151,26 @@ body { font-family: 'Inter', system-ui, sans-serif; }
         </a>
       </div>
       <div class="tiktok-feed pt-11" id="tiktok-feed"></div>
+
+      <!-- Limit Overlay (gratuit) -->
+      <div id="limit-overlay" class="limit-overlay hidden">
+        <div class="limit-box">
+          <i class="fas fa-lock text-5xl mb-4 text-white/60"></i>
+          <div class="font-bold text-2xl">Limite atteinte</div>
+          <p class="text-sm mt-3 text-white/70">Passe Premium pour voir toutes les vidéos</p>
+          <div class="mt-6">
+            <a href="https://buy.stripe.com/3cIfZgh0IbfIewH2smew80k" target="_blank" class="stripe-btn">
+              <i class="fas fa-crown"></i> S'abonner • Débloquer tout
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- PROFILE -->
   <div id="section-profile" class="section hidden">
     <div class="bg-zinc-900 rounded-3xl p-6">
-      <div id="warning-banner" class="warning-banner hidden">
-        <i class="fas fa-exclamation-triangle"></i>
-        <span id="warning-text">Tu as reçu un avertissement de l'admin.</span>
-      </div>
       <div class="flex flex-col items-center">
         <div class="relative">
           <div id="profile-avatar" class="w-24 h-24 bg-gradient-to-br from-zinc-700 to-zinc-900 rounded-full flex items-center justify-center border-4 border-zinc-800 mb-4 overflow-hidden">
@@ -158,13 +187,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
           <i class="fas fa-check-circle"></i> <span>Compte Premium actif</span>
         </div>
       </div>
-      <div class="grid grid-cols-3 gap-4 mt-10 text-center">
-        <div><div id="profile-videos-count" class="font-bold text-3xl">0</div><div class="text-xs text-zinc-500">Vidéos</div></div>
-        <div><div class="font-bold text-3xl">12.4k</div><div class="text-xs text-zinc-500">Abonnés</div></div>
-        <div><div class="font-bold text-3xl">87k</div><div class="text-xs text-zinc-500">Likes</div></div>
-      </div>
       <div class="mt-8 space-y-3">
-        <button id="subscribe-btn-profile" onclick="showSection('subscription')" class="w-full py-3.5 bg-white text-black rounded-2xl text-sm font-semibold">Activer Premium</button>
         <button onclick="showSection('subscription')" class="w-full py-3.5 bg-zinc-800 rounded-2xl text-sm font-medium">Gérer mon abonnement</button>
         <button onclick="showSection('upload')" class="w-full py-3.5 bg-emerald-950 text-emerald-400 rounded-2xl text-sm font-medium">Publier une vidéo</button>
         <a href="https://discord.gg/a2HexAGYK" target="_blank" class="w-full flex items-center justify-center gap-2 py-3.5 bg-[#5865F2] hover:bg-[#4752C4] rounded-2xl text-sm font-semibold">
@@ -179,20 +202,32 @@ body { font-family: 'Inter', system-ui, sans-serif; }
     <div class="bg-zinc-900 rounded-3xl p-6">
       <div class="text-center mb-8">
         <div class="text-emerald-400 text-sm font-semibold">PREMIUM</div>
-        <div class="text-5xl font-bold mt-2">Gratuit</div>
-        <div class="text-zinc-400">Active le pour débloquer tout</div>
+        <div class="text-5xl font-bold mt-2">9,99 €</div>
+        <div class="text-zinc-400">par mois</div>
       </div>
-      <div class="bg-zinc-950 rounded-2xl p-5 mb-6">
-        <div class="flex justify-between items-center">
-          <div>
-            <div class="font-semibold">Beubeuland Premium</div>
-            <div class="text-xs text-emerald-400 mt-1">Profil personnalisable, upload 3/jour, feed complet</div>
-          </div>
+      <div class="bg-zinc-950 rounded-2xl p-5 mb-6 space-y-3">
+        <div class="flex items-center gap-3 text-sm">
+          <i class="fas fa-check-circle text-emerald-400"></i>
+          <span>Feed illimité — toutes les vidéos</span>
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <i class="fas fa-check-circle text-emerald-400"></i>
+          <span>Profil personnalisable</span>
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <i class="fas fa-check-circle text-emerald-400"></i>
+          <span>Upload jusqu'à 3 vidéos/jour</span>
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <i class="fas fa-check-circle text-emerald-400"></i>
+          <span>Sans publicité</span>
         </div>
       </div>
       <div class="space-y-3">
-        <button id="subscribe-action-btn" onclick="subscribeUser()" class="w-full py-4 bg-white text-black font-semibold rounded-2xl">Activer Premium gratuitement</button>
-        <button id="cancel-sub-btn" onclick="cancelSubscription()" class="w-full py-3.5 bg-zinc-800 text-zinc-300 text-sm font-medium rounded-2xl hidden">Désactiver Premium</button>
+        <a href="https://buy.stripe.com/3cIfZgh0IbfIewH2smew80k" target="_blank" class="w-full flex items-center justify-center gap-2 py-4 bg-white text-black font-semibold rounded-2xl text-sm">
+          <i class="fas fa-credit-card"></i> S'abonner maintenant
+        </a>
+        <button id="cancel-sub-btn" onclick="cancelSubscription()" class="w-full py-3.5 bg-zinc-800 text-zinc-300 text-sm font-medium rounded-2xl hidden">Annuler mon abonnement</button>
         <a href="https://discord.gg/a2HexAGYK" target="_blank" class="w-full flex items-center justify-center gap-2 py-3.5 bg-[#5865F2] hover:bg-[#4752C4] rounded-2xl text-sm font-semibold">
           <i class="fab fa-discord"></i> Rejoins sur Discord
         </a>
@@ -257,7 +292,7 @@ const DB_NAME = 'beubeuland_db';
 const DB_VERSION = 2;
 const STORE_VIDEOS = 'videos';
 const STORE_USERS = 'users';
-const STORE_WARNINGS = 'warnings';
+const STORE_LIKES = 'likes';
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -266,7 +301,7 @@ function openDB() {
       const db = req.result;
       if (!db.objectStoreNames.contains(STORE_VIDEOS)) db.createObjectStore(STORE_VIDEOS, { keyPath: 'id' });
       if (!db.objectStoreNames.contains(STORE_USERS)) db.createObjectStore(STORE_USERS, { keyPath: 'userId' });
-      if (!db.objectStoreNames.contains(STORE_WARNINGS)) db.createObjectStore(STORE_WARNINGS, { keyPath: 'id', autoIncrement: true });
+      if (!db.objectStoreNames.contains(STORE_LIKES)) db.createObjectStore(STORE_LIKES, { keyPath: 'id', autoIncrement: true });
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
@@ -303,6 +338,16 @@ async function getAllFromStore(store) {
   });
 }
 
+async function deleteFromStore(store, key) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    tx.objectStore(store).delete(key);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
 async function saveVideo(video) { await saveToStore(STORE_VIDEOS, video); }
 async function getVideos() {
   const videos = await getAllFromStore(STORE_VIDEOS);
@@ -310,6 +355,7 @@ async function getVideos() {
   return videos;
 }
 
+/* ========== USER ========== */
 function getUserId() {
   let uid = localStorage.getItem('beubeuland_userId');
   if (!uid) {
@@ -322,11 +368,8 @@ function getUserId() {
 async function saveUserProfile(profile) {
   const uid = getUserId();
   await saveToStore(STORE_USERS, {
-    userId: uid,
-    name: profile.name || 'Beubeuland',
-    bio: profile.bio || '',
-    avatar: profile.avatar || null,
-    isPremium: localStorage.getItem('beubeuland_premium') === 'true',
+    userId: uid, name: profile.name || 'Beubeuland', bio: profile.bio || '',
+    avatar: profile.avatar || null, isPremium: isPremium,
     joinedAt: profile.joinedAt || new Date().toISOString(),
     lastActive: new Date().toISOString()
   });
@@ -340,17 +383,33 @@ async function loadUserProfile() {
   }
 }
 
-async function checkWarnings() {
-  const warnings = await getAllFromStore(STORE_WARNINGS);
-  const myWarnings = warnings.filter(w => w.userId === getUserId() && !w.seen);
-  if (myWarnings.length > 0) {
-    const banner = document.getElementById('warning-banner');
-    document.getElementById('warning-text').textContent = myWarnings[myWarnings.length - 1].message;
-    banner.classList.remove('hidden');
-    for (const w of myWarnings) { w.seen = true; await saveToStore(STORE_WARNINGS, w); }
+/* ========== LIKES ========== */
+async function getLikesForVideo(videoId) {
+  const likes = await getAllFromStore(STORE_LIKES);
+  return likes.filter(l => l.videoId === videoId);
+}
+
+async function hasUserLiked(videoId) {
+  const likes = await getAllFromStore(STORE_LIKES);
+  return likes.some(l => l.videoId === videoId && l.userId === getUserId());
+}
+
+async function toggleLike(videoId) {
+  const likes = await getAllFromStore(STORE_LIKES);
+  const existing = likes.find(l => l.videoId === videoId && l.userId === getUserId());
+  if (existing) {
+    await deleteFromStore(STORE_LIKES, existing.id);
+    return false;
+  } else {
+    await saveToStore(STORE_LIKES, {
+      videoId: videoId, userId: getUserId(),
+      created_at: new Date().toISOString()
+    });
+    return true;
   }
 }
 
+/* ========== STATE ========== */
 let isPremium = localStorage.getItem('beubeuland_premium') === 'true';
 let uploadsToday = parseInt(localStorage.getItem('beubeuland_uploads_today') || '0');
 let currentObjectUrls = [];
@@ -358,7 +417,11 @@ let feedObserver = null;
 let userProfile = JSON.parse(localStorage.getItem('beubeuland_profile') || '{}');
 
 function getProfile() {
-  return { name: userProfile.name || 'Beubeuland', bio: userProfile.bio || 'demo@beubeuland.com', avatar: userProfile.avatar || null };
+  return {
+    name: userProfile.name || 'Beubeuland',
+    bio: userProfile.bio || 'demo@beubeuland.com',
+    avatar: userProfile.avatar || null
+  };
 }
 
 function saveProfileData(data) {
@@ -378,15 +441,36 @@ function renderProfile() {
   else { avatarText.classList.remove('hidden'); avatarImg.classList.add('hidden'); }
 }
 
+/* ========== NAV & UI ========== */
+function updateNavVisibility() {
+  const profileTab = document.getElementById('nav-profile');
+  const uploadTab = document.getElementById('nav-upload');
+  if (isPremium) {
+    profileTab.classList.remove('hidden');
+    uploadTab.classList.remove('hidden');
+  } else {
+    profileTab.classList.add('hidden');
+    uploadTab.classList.add('hidden');
+  }
+}
+
+function showSection(section) {
+  document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
+  document.getElementById('section-' + section).style.display = 'block';
+  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('nav-' + section).classList.add('active');
+  if (section === 'feed') loadVideos();
+  if (section === 'upload') updateUploadCount();
+}
+
+/* ========== PROFILE EDIT ========== */
 function openProfileEdit() {
-  if (!isPremium) { alert('Active Premium pour personnaliser ton profil !'); showSection('subscription'); return; }
   const p = getProfile();
   document.getElementById('edit-name').value = p.name === 'Beubeuland' ? '' : p.name;
   document.getElementById('edit-bio').value = p.bio === 'demo@beubeuland.com' ? '' : p.bio;
   document.getElementById('profile-edit-modal').classList.add('visible');
 }
 function closeProfileEdit() { document.getElementById('profile-edit-modal').classList.remove('visible'); }
-
 function previewAvatar(input) {
   if (!input.files.length) return;
   const reader = new FileReader();
@@ -397,7 +481,6 @@ function previewAvatar(input) {
   };
   reader.readAsDataURL(input.files[0]);
 }
-
 function saveProfile() {
   const name = document.getElementById('edit-name').value.trim() || 'Beubeuland';
   const bio = document.getElementById('edit-bio').value.trim() || 'demo@beubeuland.com';
@@ -409,6 +492,7 @@ function saveProfile() {
   } else { saveProfileData({ name, bio }); closeProfileEdit(); }
 }
 
+/* ========== FORMAT ========== */
 function formatTime(seconds) {
   if (!seconds || isNaN(seconds) || !isFinite(seconds)) return '0:00';
   const m = Math.floor(seconds / 60);
@@ -416,6 +500,7 @@ function formatTime(seconds) {
   return m + ':' + (s < 10 ? '0' : '') + s;
 }
 
+/* ========== VIDEOS ========== */
 async function loadVideos() {
   const feed = document.getElementById('tiktok-feed');
   feed.innerHTML = '';
@@ -426,20 +511,28 @@ async function loadVideos() {
   let videos = [];
   try { videos = await getVideos(); }
   catch (err) {
-    console.error('Erreur de chargement :', err);
     feed.innerHTML = '<div class="text-center text-zinc-500 py-20">Erreur de chargement</div>';
     return;
   }
 
-  document.getElementById('profile-videos-count').textContent = videos.length;
   if (videos.length === 0) {
     feed.innerHTML = '<div class="text-center text-zinc-500 py-20">Aucune vidéo pour le moment</div>';
+    document.getElementById('limit-overlay').classList.add('hidden');
     return;
   }
 
-  videos.forEach((video) => {
+  // Gratuit = 2 vidéos max, Premium = toutes
+  const maxVideos = isPremium ? videos.length : 2;
+  const visibleVideos = videos.slice(0, maxVideos);
+
+  for (const video of visibleVideos) {
+    const likes = await getLikesForVideo(video.id);
+    const userLiked = await hasUserLiked(video.id);
+    const likeCount = likes.length;
+
     const slide = document.createElement('div');
     slide.className = 'video-slide relative';
+
     const videoEl = document.createElement('video');
     videoEl.className = 'video-player';
     videoEl.loop = true; videoEl.playsInline = true; videoEl.preload = 'auto';
@@ -475,20 +568,46 @@ async function loadVideos() {
     const authorName = video.authorName || 'Beubeuland';
     const info = document.createElement('div'); info.className = 'video-info';
     info.innerHTML = `<div class="font-bold text-base leading-tight">${escapeHtml(video.title)}</div><div class="text-xs text-zinc-300 mt-0.5 leading-tight">${escapeHtml(video.description || '')}</div><div class="text-[10px] text-emerald-400 mt-1">@${escapeHtml(authorName)}</div>`;
+
+    const likeClass = userLiked ? 'liked' : '';
     const actions = document.createElement('div'); actions.className = 'video-actions-right';
     actions.innerHTML = `
-      <button onclick="likeVideo(this)" class="action-btn flex flex-col items-center gap-0.5"><i class="fas fa-heart text-2xl"></i><span class="text-[10px]">124k</span></button>
-      <button onclick="openCommentModal(${video.id})" class="action-btn flex flex-col items-center gap-0.5"><i class="fas fa-comment text-2xl"></i><span class="text-[10px]">8.4k</span></button>
-      <button onclick="shareVideo(${video.id})" class="action-btn flex flex-col items-center gap-0.5"><i class="fas fa-share text-2xl"></i></button>`;
+      <button onclick="handleLike(this, ${video.id})" class="action-btn flex flex-col items-center gap-0.5 ${likeClass}" id="like-btn-${video.id}">
+        <i class="fas fa-heart text-2xl"></i><span class="text-[10px]" id="like-count-${video.id}">${likeCount}</span>
+      </button>
+      <button onclick="openCommentModal(${video.id})" class="action-btn flex flex-col items-center gap-0.5">
+        <i class="fas fa-comment text-2xl"></i><span class="text-[10px]">0</span>
+      </button>
+      <button onclick="shareVideo(${video.id})" class="action-btn flex flex-col items-center gap-0.5">
+        <i class="fas fa-share text-2xl"></i>
+      </button>`;
 
     slide.appendChild(videoEl); slide.appendChild(overlay); slide.appendChild(badge);
     slide.appendChild(info); slide.appendChild(actions); slide.appendChild(loader);
     slide.appendChild(bigPlay); slide.appendChild(controls); feed.appendChild(slide);
     setupVideoControls(videoEl, video.id, loader, bigPlay);
-  });
+  }
+
+  // Show limit overlay for free users if there are more videos
+  if (!isPremium && videos.length > 2) {
+    document.getElementById('limit-overlay').classList.remove('hidden');
+  } else {
+    document.getElementById('limit-overlay').classList.add('hidden');
+  }
+
   setupAutoplayObserver();
 }
 
+async function handleLike(btn, videoId) {
+  const isLiked = await toggleLike(videoId);
+  const countEl = document.getElementById('like-count-' + videoId);
+  const likes = await getLikesForVideo(videoId);
+  countEl.textContent = likes.length;
+  if (isLiked) btn.classList.add('liked');
+  else btn.classList.remove('liked');
+}
+
+/* ========== CONTROLS ========== */
 function setupVideoControls(video, id, loader, bigPlay) {
   const playBtn = document.getElementById('play-' + id);
   const backBtn = document.getElementById('back-' + id);
@@ -556,63 +675,46 @@ function setupAutoplayObserver() {
 }
 
 function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
-
-function showSection(section) {
-  document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
-  document.getElementById('section-' + section).style.display = 'block';
-  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
-  document.getElementById('nav-' + section).classList.add('active');
-  if (section === 'feed') loadVideos();
-  if (section === 'upload') updateUploadCount();
-  if (section === 'profile') checkWarnings();
-}
-
-function likeVideo(element) {
-  const icon = element.querySelector('i');
-  if (icon) { icon.style.color = '#ef4444'; setTimeout(() => icon.style.color = '', 800); }
-}
 function openCommentModal(id) { alert('Commentaires pour vidéo #' + id); }
 function shareVideo(id) { navigator.clipboard.writeText('https://beubeuland.com/video/' + id); alert('Lien copié !'); }
 
+/* ========== SUBSCRIPTION ========== */
 function updateProfileStatus() {
   const status = document.getElementById('profile-status');
-  const subscribeBtn = document.getElementById('subscribe-btn-profile');
-  const subActionBtn = document.getElementById('subscribe-action-btn');
   const cancelBtn = document.getElementById('cancel-sub-btn');
   if (isPremium) {
     status.innerHTML = '<i class="fas fa-check-circle"></i> <span>Compte Premium actif</span>';
     status.className = 'mt-5 px-5 py-1.5 bg-emerald-950 text-emerald-400 text-sm font-medium rounded-full flex items-center gap-2 border border-emerald-900';
-    if (subscribeBtn) subscribeBtn.style.display = 'none';
-    if (subActionBtn) { subActionBtn.textContent = 'Premium actif ✓'; subActionBtn.disabled = true; subActionBtn.classList.add('opacity-50'); }
     if (cancelBtn) cancelBtn.classList.remove('hidden');
   } else {
     status.innerHTML = '<i class="fas fa-circle text-zinc-500"></i> <span>Compte gratuit</span>';
     status.className = 'mt-5 px-5 py-1.5 bg-zinc-800 text-zinc-400 text-sm font-medium rounded-full flex items-center gap-2 border border-zinc-700';
-    if (subscribeBtn) { subscribeBtn.style.display = 'block'; subscribeBtn.textContent = 'Activer Premium'; }
-    if (subActionBtn) { subActionBtn.textContent = 'Activer Premium gratuitement'; subActionBtn.disabled = false; subActionBtn.classList.remove('opacity-50'); }
     if (cancelBtn) cancelBtn.classList.add('hidden');
   }
 }
 
-async function subscribeUser() {
+function activatePremium() {
   isPremium = true;
   localStorage.setItem('beubeuland_premium', 'true');
   uploadsToday = 0;
   localStorage.setItem('beubeuland_uploads_today', '0');
-  await saveUserProfile(getProfile());
+  saveUserProfile(getProfile());
   updateProfileStatus();
-  alert('✅ Premium activé ! Tu peux personnaliser ton profil et uploader 3 vidéos par jour.');
-  showSection('profile');
+  updateNavVisibility();
+  alert('✅ Premium activé !');
+  showSection('feed');
 }
-function subscribeFromProfile() { showSection('subscription'); }
-async function cancelSubscription() {
-  if (confirm("Désactiver Premium ?")) {
+
+function cancelSubscription() {
+  if (confirm("Annuler l'abonnement Premium ?")) {
     isPremium = false; localStorage.setItem('beubeuland_premium', 'false');
-    await saveUserProfile(getProfile()); updateProfileStatus(); showSection('profile');
+    saveUserProfile(getProfile()); updateProfileStatus(); updateNavVisibility();
+    showSection('feed');
   }
 }
-function updateUploadCount() { const el = document.getElementById('upload-count'); if (el) el.innerText = uploadsToday; }
 
+/* ========== UPLOAD ========== */
+function updateUploadCount() { const el = document.getElementById('upload-count'); if (el) el.innerText = uploadsToday; }
 function handleVideoUpload(input) {
   if (!input.files.length) return;
   const file = input.files[0];
@@ -625,13 +727,13 @@ function handleVideoUpload(input) {
 async function publishVideo() {
   const title = document.getElementById('video-title').value.trim();
   if (!title) { alert('Titre requis'); return; }
-  if (uploadsToday >= 3) { alert('Limite atteinte (3 vidéos/jour). Reviens demain !'); return; }
+  if (uploadsToday >= 3) { alert('Limite atteinte (3 vidéos/jour)'); return; }
   const input = document.getElementById('upload-input');
   const file = input.files[0];
   if (!file) { alert('Aucun fichier sélectionné'); return; }
   const publishBtn = document.getElementById('publish-btn');
   const progressEl = document.getElementById('upload-progress');
-  publishBtn.disabled = true; publishBtn.textContent = 'Publication en cours...';
+  publishBtn.disabled = true; publishBtn.textContent = 'Publication...';
   progressEl.classList.add('visible'); progressEl.textContent = 'Enregistrement...';
   try {
     const profile = getProfile();
@@ -652,13 +754,16 @@ async function publishVideo() {
   }
 }
 
+/* ========== INIT ========== */
 async function init() {
   if (localStorage.getItem('beubeuland_premium') === null) localStorage.setItem('beubeuland_premium', 'false');
   await loadUserProfile(); renderProfile();
+  updateNavVisibility();
   document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
   document.getElementById('section-feed').style.display = 'block';
   document.getElementById('nav-feed').classList.add('active');
-  updateProfileStatus(); loadVideos();
+  updateProfileStatus();
+  loadVideos();
 }
 window.onload = init;
 </script>
