@@ -21,179 +21,79 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 #upload-progress { display: none; }
 #upload-progress.visible { display: block; }
 
-/* === Contrôles vidéo === */
 .video-controls {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 25;
+  position: absolute; bottom: 0; left: 0; right: 0; z-index: 25;
   padding: 8px 10px 10px;
   background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 70%, transparent 100%);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  display: flex; flex-direction: column; gap: 4px;
 }
-.controls-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+.controls-row { display: flex; align-items: center; gap: 6px; }
 .controls-row button {
-  background: rgba(255,255,255,0.15);
-  border: none;
-  color: #fff;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s;
-  font-size: 10px;
-  flex-shrink: 0;
+  background: rgba(255,255,255,0.15); border: none; color: #fff;
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.2s; font-size: 10px; flex-shrink: 0;
 }
 .controls-row button:hover { background: rgba(255,255,255,0.35); }
-.progress-bar-container {
-  flex: 1;
-  height: 3px;
-  background: rgba(255,255,255,0.25);
-  border-radius: 2px;
-  cursor: pointer;
-  position: relative;
-}
-.progress-bar-fill {
-  height: 100%;
-  background: #fff;
-  border-radius: 2px;
-  width: 0%;
-}
-.time-display {
-  font-size: 10px;
-  color: rgba(255,255,255,0.85);
-  min-width: 55px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  flex-shrink: 0;
-}
+.progress-bar-container { flex: 1; height: 3px; background: rgba(255,255,255,0.25); border-radius: 2px; cursor: pointer; position: relative; }
+.progress-bar-fill { height: 100%; background: #fff; border-radius: 2px; width: 0%; }
+.time-display { font-size: 10px; color: rgba(255,255,255,0.85); min-width: 55px; text-align: right; font-variant-numeric: tabular-nums; flex-shrink: 0; }
 .volume-btn { position: relative; }
 .volume-slider {
-  position: absolute;
-  bottom: 36px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 26px;
-  height: 60px;
-  background: rgba(0,0,0,0.85);
-  border-radius: 13px;
-  padding: 5px 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
+  position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+  width: 26px; height: 60px; background: rgba(0,0,0,0.85); border-radius: 13px;
+  padding: 5px 0; display: none; align-items: center; justify-content: center;
 }
 .volume-btn:hover .volume-slider { display: flex; }
-.volume-slider input[type="range"] {
-  -webkit-appearance: slider-vertical;
-  width: 14px;
-  height: 48px;
-}
+.volume-slider input[type="range"] { -webkit-appearance: slider-vertical; width: 14px; height: 48px; }
 
-/* === Loader === */
-.video-loader {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 15;
-  display: none;
-}
+.video-loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 15; display: none; }
 .video-loader.visible { display: block; }
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid rgba(255,255,255,0.2);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
+.spinner { width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* === Big play overlay === */
 .big-play-btn {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 20;
-  width: 56px;
-  height: 56px;
-  background: rgba(0,0,0,0.5);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: 22px;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 20;
+  width: 56px; height: 56px; background: rgba(0,0,0,0.5); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px;
+  opacity: 0; transition: opacity 0.2s ease; pointer-events: none;
 }
 .big-play-btn.visible { opacity: 1; }
 
-/* === Header compact === */
 .app-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  background: rgba(0,0,0,0.85);
-  padding: 10px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 44px;
+  position: absolute; top: 0; left: 0; right: 0; z-index: 50;
+  background: rgba(0,0,0,0.85); padding: 10px 14px;
+  display: flex; justify-content: space-between; align-items: center; height: 44px;
 }
 .app-header .logo-text { font-weight: 700; font-size: 15px; }
 .app-header .discord-btn {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  background: #5865F2;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 600;
-  border-radius: 20px;
-  text-decoration: none;
+  display: flex; align-items: center; gap: 4px; padding: 4px 10px;
+  background: #5865F2; color: #fff; font-size: 10px; font-weight: 600;
+  border-radius: 20px; text-decoration: none;
 }
 .app-header .discord-btn:hover { background: #4752C4; }
 
-/* === Info overlay repositionnée === */
-.video-info {
-  position: absolute;
-  bottom: 72px;
-  left: 12px;
-  right: 60px;
-  z-index: 20;
+.video-info { position: absolute; bottom: 72px; left: 12px; right: 60px; z-index: 20; }
+.video-actions-right { position: absolute; right: 10px; bottom: 90px; display: flex; flex-direction: column; align-items: center; gap: 14px; z-index: 30; }
+
+.profile-edit-modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100;
+  display: none; align-items: center; justify-content: center; padding: 20px;
 }
-.video-actions-right {
-  position: absolute;
-  right: 10px;
-  bottom: 90px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  z-index: 30;
+.profile-edit-modal.visible { display: flex; }
+.profile-edit-box { background: #18181b; border-radius: 24px; padding: 24px; width: 100%; max-width: 400px; }
+
+.warning-banner {
+  background: #7c2d12; border: 1px solid #9a3412; color: #fdba74;
+  padding: 10px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 13px;
+  display: flex; align-items: center; gap: 8px;
 }
+.warning-banner i { color: #f97316; }
 </style>
 <base target="_blank">
 </head>
 <body class="bg-zinc-950 text-white">
 
-<!-- Header extérieur -->
 <div class="max-w-[520px] mx-auto px-4 pt-4 pb-3">
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-2">
@@ -206,13 +106,12 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   </div>
 </div>
 
-<!-- Navigation -->
 <div class="max-w-[520px] mx-auto px-4 mb-3">
   <div class="flex bg-zinc-900 rounded-3xl p-1 text-sm">
     <button onclick="showSection('feed')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl font-medium active" id="nav-feed">Feed</button>
-    <button onclick="showSection('profile')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl font-medium hidden" id="nav-profile">Profil</button>
-    <button onclick="showSection('subscription')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl font-medium" id="nav-subscription">Abonnement</button>
-    <button onclick="showSection('upload')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl font-medium hidden" id="nav-upload">Upload</button>
+    <button onclick="showSection('profile')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl font-medium" id="nav-profile">Profil</button>
+    <button onclick="showSection('subscription')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl font-medium" id="nav-subscription">Premium</button>
+    <button onclick="showSection('upload')" class="nav-tab flex-1 py-2.5 px-4 rounded-3xl font-medium" id="nav-upload">Upload</button>
   </div>
 </div>
 
@@ -221,7 +120,6 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   <!-- FEED -->
   <div id="section-feed" class="section active">
     <div class="demo-container bg-black h-[640px]">
-      <!-- Header intérieur compact -->
       <div class="app-header">
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 bg-white rounded-full flex items-center justify-center">
@@ -233,42 +131,42 @@ body { font-family: 'Inter', system-ui, sans-serif; }
           <i class="fab fa-discord" style="font-size:10px;"></i> Discord
         </a>
       </div>
-
       <div class="tiktok-feed pt-11" id="tiktok-feed"></div>
-
-      <div id="limit-overlay" onclick="showSection('subscription')" class="hidden absolute inset-0 bg-black/95 z-40 flex items-center justify-center">
-        <div class="text-center px-8">
-          <i class="fas fa-lock text-5xl mb-4 text-white/60"></i>
-          <div class="font-bold text-2xl">Limite atteinte</div>
-          <p class="text-sm mt-3 text-white/70">Passez en Premium pour tout débloquer</p>
-          <div class="mt-6 px-8 py-3 bg-white text-black text-sm font-semibold rounded-2xl inline-block">S'abonner • 3,99 €</div>
-        </div>
-      </div>
     </div>
   </div>
 
   <!-- PROFILE -->
   <div id="section-profile" class="section hidden">
     <div class="bg-zinc-900 rounded-3xl p-6">
+      <div id="warning-banner" class="warning-banner hidden">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span id="warning-text">Tu as reçu un avertissement de l'admin.</span>
+      </div>
       <div class="flex flex-col items-center">
-        <div class="w-24 h-24 bg-gradient-to-br from-zinc-700 to-zinc-900 rounded-full flex items-center justify-center border-4 border-zinc-800 mb-4">
-          <span class="text-6xl font-black tracking-[-3px]">B</span>
+        <div class="relative">
+          <div id="profile-avatar" class="w-24 h-24 bg-gradient-to-br from-zinc-700 to-zinc-900 rounded-full flex items-center justify-center border-4 border-zinc-800 mb-4 overflow-hidden">
+            <span id="profile-avatar-text" class="text-6xl font-black tracking-[-3px]">B</span>
+            <img id="profile-avatar-img" class="hidden w-full h-full object-cover" />
+          </div>
+          <button onclick="openProfileEdit()" class="absolute bottom-3 right-0 w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-xs">
+            <i class="fas fa-pen"></i>
+          </button>
         </div>
-        <h2 class="text-2xl font-bold">Beubeuland</h2>
-        <p class="text-zinc-400 text-sm">demo@beubeuland.com</p>
+        <h2 id="profile-name" class="text-2xl font-bold">Beubeuland</h2>
+        <p id="profile-bio" class="text-zinc-400 text-sm mt-1 text-center max-w-xs">demo@beubeuland.com</p>
         <div id="profile-status" class="mt-5 px-5 py-1.5 bg-emerald-950 text-emerald-400 text-sm font-medium rounded-full flex items-center gap-2 border border-emerald-900">
-          <i class="fas fa-check-circle"></i> <span>Abonnement Premium actif</span>
+          <i class="fas fa-check-circle"></i> <span>Compte Premium actif</span>
         </div>
       </div>
       <div class="grid grid-cols-3 gap-4 mt-10 text-center">
-        <div><div class="font-bold text-3xl">42</div><div class="text-xs text-zinc-500">Vidéos</div></div>
+        <div><div id="profile-videos-count" class="font-bold text-3xl">0</div><div class="text-xs text-zinc-500">Vidéos</div></div>
         <div><div class="font-bold text-3xl">12.4k</div><div class="text-xs text-zinc-500">Abonnés</div></div>
         <div><div class="font-bold text-3xl">87k</div><div class="text-xs text-zinc-500">Likes</div></div>
       </div>
       <div class="mt-8 space-y-3">
-        <button id="subscribe-btn-profile" onclick="subscribeFromProfile()" class="w-full py-3.5 bg-white text-black rounded-2xl text-sm font-semibold" style="display:none;">S'abonner</button>
+        <button id="subscribe-btn-profile" onclick="showSection('subscription')" class="w-full py-3.5 bg-white text-black rounded-2xl text-sm font-semibold">Activer Premium</button>
         <button onclick="showSection('subscription')" class="w-full py-3.5 bg-zinc-800 rounded-2xl text-sm font-medium">Gérer mon abonnement</button>
-        <button onclick="showSection('upload')" class="w-full py-3.5 bg-emerald-950 text-emerald-400 rounded-2xl text-sm font-medium">Publier une vidéo (Premium)</button>
+        <button onclick="showSection('upload')" class="w-full py-3.5 bg-emerald-950 text-emerald-400 rounded-2xl text-sm font-medium">Publier une vidéo</button>
         <a href="https://discord.gg/a2HexAGYK" target="_blank" class="w-full flex items-center justify-center gap-2 py-3.5 bg-[#5865F2] hover:bg-[#4752C4] rounded-2xl text-sm font-semibold">
           <i class="fab fa-discord"></i> Rejoins la communauté
         </a>
@@ -281,20 +179,20 @@ body { font-family: 'Inter', system-ui, sans-serif; }
     <div class="bg-zinc-900 rounded-3xl p-6">
       <div class="text-center mb-8">
         <div class="text-emerald-400 text-sm font-semibold">PREMIUM</div>
-        <div class="text-5xl font-bold mt-2">3,99 €</div>
-        <div class="text-zinc-400">par mois</div>
+        <div class="text-5xl font-bold mt-2">Gratuit</div>
+        <div class="text-zinc-400">Active le pour débloquer tout</div>
       </div>
       <div class="bg-zinc-950 rounded-2xl p-5 mb-6">
         <div class="flex justify-between items-center">
           <div>
             <div class="font-semibold">Beubeuland Premium</div>
-            <div class="text-xs text-emerald-400 mt-1">Abonnez-vous pour débloquer tous les avantages</div>
+            <div class="text-xs text-emerald-400 mt-1">Profil personnalisable, upload 3/jour, feed complet</div>
           </div>
         </div>
       </div>
       <div class="space-y-3">
-        <button onclick="subscribeUser()" class="w-full py-4 bg-white text-black font-semibold rounded-2xl">S'abonner maintenant</button>
-        <button onclick="cancelSubscription()" class="w-full py-3.5 bg-zinc-800 text-zinc-300 text-sm font-medium rounded-2xl">Annuler mon abonnement</button>
+        <button id="subscribe-action-btn" onclick="subscribeUser()" class="w-full py-4 bg-white text-black font-semibold rounded-2xl">Activer Premium gratuitement</button>
+        <button id="cancel-sub-btn" onclick="cancelSubscription()" class="w-full py-3.5 bg-zinc-800 text-zinc-300 text-sm font-medium rounded-2xl hidden">Désactiver Premium</button>
         <a href="https://discord.gg/a2HexAGYK" target="_blank" class="w-full flex items-center justify-center gap-2 py-3.5 bg-[#5865F2] hover:bg-[#4752C4] rounded-2xl text-sm font-semibold">
           <i class="fab fa-discord"></i> Rejoins sur Discord
         </a>
@@ -307,7 +205,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
     <div class="bg-zinc-900 rounded-3xl p-6">
       <div class="mb-6">
         <div class="font-bold text-xl">Publier une vidéo</div>
-        <div class="text-emerald-400 text-sm">Premium • <span id="upload-count">0</span>/3 aujourd'hui</div>
+        <div class="text-emerald-400 text-sm"><span id="upload-count">0</span>/3 aujourd'hui</div>
       </div>
       <div id="upload-dropzone" onclick="document.getElementById('upload-input').click()" class="border-2 border-dashed border-zinc-700 rounded-3xl p-9 text-center cursor-pointer">
         <i class="fas fa-cloud-upload-alt text-4xl text-zinc-400 mb-4"></i>
@@ -326,56 +224,190 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 
 </div>
 
+<!-- Profile Edit Modal -->
+<div id="profile-edit-modal" class="profile-edit-modal">
+  <div class="profile-edit-box">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-bold text-lg">Modifier le profil</h3>
+      <button onclick="closeProfileEdit()" class="text-zinc-400 hover:text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="space-y-4">
+      <div>
+        <label class="text-xs text-zinc-400 mb-1 block">Photo de profil</label>
+        <input type="file" id="edit-avatar" accept="image/*" class="w-full text-sm text-zinc-400" onchange="previewAvatar(this)">
+        <div id="avatar-preview" class="w-16 h-16 rounded-full bg-zinc-800 mt-2 hidden overflow-hidden">
+          <img class="w-full h-full object-cover" />
+        </div>
+      </div>
+      <div>
+        <label class="text-xs text-zinc-400 mb-1 block">Pseudo</label>
+        <input type="text" id="edit-name" placeholder="Ton pseudo" class="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-xl text-white">
+      </div>
+      <div>
+        <label class="text-xs text-zinc-400 mb-1 block">Bio</label>
+        <textarea id="edit-bio" placeholder="Ta bio..." rows="2" class="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-xl text-white"></textarea>
+      </div>
+      <button onclick="saveProfile()" class="w-full py-3 bg-white text-black font-semibold rounded-xl">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <script>
-/* ============================================================
-   STOCKAGE VIDÉO — IndexedDB
-============================================================ */
 const DB_NAME = 'beubeuland_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_VIDEOS = 'videos';
+const STORE_USERS = 'users';
+const STORE_WARNINGS = 'warnings';
+
 function openDB() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = () => {
+    req.onupgradeneeded = (e) => {
       const db = req.result;
-      if (!db.objectStoreNames.contains(STORE_VIDEOS)) {
-        db.createObjectStore(STORE_VIDEOS, { keyPath: 'id' });
-      }
+      if (!db.objectStoreNames.contains(STORE_VIDEOS)) db.createObjectStore(STORE_VIDEOS, { keyPath: 'id' });
+      if (!db.objectStoreNames.contains(STORE_USERS)) db.createObjectStore(STORE_USERS, { keyPath: 'userId' });
+      if (!db.objectStoreNames.contains(STORE_WARNINGS)) db.createObjectStore(STORE_WARNINGS, { keyPath: 'id', autoIncrement: true });
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
   });
 }
-async function saveVideo(video) {
+
+async function saveToStore(store, data) {
   const db = await openDB();
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_VIDEOS, 'readwrite');
-    tx.objectStore(STORE_VIDEOS).put(video);
+    const tx = db.transaction(store, 'readwrite');
+    tx.objectStore(store).put(data);
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
   });
 }
-async function getVideos() {
+
+async function getFromStore(store, key) {
   const db = await openDB();
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_VIDEOS, 'readonly');
-    const req = tx.objectStore(STORE_VIDEOS).getAll();
-    req.onsuccess = () => {
-      const videos = req.result || [];
-      videos.sort((a, b) => b.id - a.id);
-      resolve(videos);
-    };
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
   });
 }
 
-/* ============================================================
-   ÉTAT
-============================================================ */
+async function getAllFromStore(store) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function saveVideo(video) { await saveToStore(STORE_VIDEOS, video); }
+async function getVideos() {
+  const videos = await getAllFromStore(STORE_VIDEOS);
+  videos.sort((a, b) => b.id - a.id);
+  return videos;
+}
+
+function getUserId() {
+  let uid = localStorage.getItem('beubeuland_userId');
+  if (!uid) {
+    uid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('beubeuland_userId', uid);
+  }
+  return uid;
+}
+
+async function saveUserProfile(profile) {
+  const uid = getUserId();
+  await saveToStore(STORE_USERS, {
+    userId: uid,
+    name: profile.name || 'Beubeuland',
+    bio: profile.bio || '',
+    avatar: profile.avatar || null,
+    isPremium: localStorage.getItem('beubeuland_premium') === 'true',
+    joinedAt: profile.joinedAt || new Date().toISOString(),
+    lastActive: new Date().toISOString()
+  });
+}
+
+async function loadUserProfile() {
+  const data = await getFromStore(STORE_USERS, getUserId());
+  if (data) {
+    userProfile = { name: data.name, bio: data.bio, avatar: data.avatar };
+    localStorage.setItem('beubeuland_profile', JSON.stringify(userProfile));
+  }
+}
+
+async function checkWarnings() {
+  const warnings = await getAllFromStore(STORE_WARNINGS);
+  const myWarnings = warnings.filter(w => w.userId === getUserId() && !w.seen);
+  if (myWarnings.length > 0) {
+    const banner = document.getElementById('warning-banner');
+    document.getElementById('warning-text').textContent = myWarnings[myWarnings.length - 1].message;
+    banner.classList.remove('hidden');
+    for (const w of myWarnings) { w.seen = true; await saveToStore(STORE_WARNINGS, w); }
+  }
+}
+
 let isPremium = localStorage.getItem('beubeuland_premium') === 'true';
 let uploadsToday = parseInt(localStorage.getItem('beubeuland_uploads_today') || '0');
 let currentObjectUrls = [];
 let feedObserver = null;
+let userProfile = JSON.parse(localStorage.getItem('beubeuland_profile') || '{}');
+
+function getProfile() {
+  return { name: userProfile.name || 'Beubeuland', bio: userProfile.bio || 'demo@beubeuland.com', avatar: userProfile.avatar || null };
+}
+
+function saveProfileData(data) {
+  userProfile = { ...userProfile, ...data };
+  localStorage.setItem('beubeuland_profile', JSON.stringify(userProfile));
+  saveUserProfile(userProfile);
+  renderProfile();
+}
+
+function renderProfile() {
+  const p = getProfile();
+  document.getElementById('profile-name').textContent = p.name;
+  document.getElementById('profile-bio').textContent = p.bio;
+  const avatarText = document.getElementById('profile-avatar-text');
+  const avatarImg = document.getElementById('profile-avatar-img');
+  if (p.avatar) { avatarText.classList.add('hidden'); avatarImg.src = p.avatar; avatarImg.classList.remove('hidden'); }
+  else { avatarText.classList.remove('hidden'); avatarImg.classList.add('hidden'); }
+}
+
+function openProfileEdit() {
+  if (!isPremium) { alert('Active Premium pour personnaliser ton profil !'); showSection('subscription'); return; }
+  const p = getProfile();
+  document.getElementById('edit-name').value = p.name === 'Beubeuland' ? '' : p.name;
+  document.getElementById('edit-bio').value = p.bio === 'demo@beubeuland.com' ? '' : p.bio;
+  document.getElementById('profile-edit-modal').classList.add('visible');
+}
+function closeProfileEdit() { document.getElementById('profile-edit-modal').classList.remove('visible'); }
+
+function previewAvatar(input) {
+  if (!input.files.length) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const preview = document.getElementById('avatar-preview');
+    preview.querySelector('img').src = e.target.result;
+    preview.classList.remove('hidden');
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function saveProfile() {
+  const name = document.getElementById('edit-name').value.trim() || 'Beubeuland';
+  const bio = document.getElementById('edit-bio').value.trim() || 'demo@beubeuland.com';
+  const avatarInput = document.getElementById('edit-avatar');
+  if (avatarInput.files.length) {
+    const reader = new FileReader();
+    reader.onload = (e) => { saveProfileData({ name, bio, avatar: e.target.result }); closeProfileEdit(); };
+    reader.readAsDataURL(avatarInput.files[0]);
+  } else { saveProfileData({ name, bio }); closeProfileEdit(); }
+}
 
 function formatTime(seconds) {
   if (!seconds || isNaN(seconds) || !isFinite(seconds)) return '0:00';
@@ -384,9 +416,6 @@ function formatTime(seconds) {
   return m + ':' + (s < 10 ? '0' : '') + s;
 }
 
-/* ============================================================
-   CHARGEMENT VIDÉOS
-============================================================ */
 async function loadVideos() {
   const feed = document.getElementById('tiktok-feed');
   feed.innerHTML = '';
@@ -397,130 +426,69 @@ async function loadVideos() {
   let videos = [];
   try { videos = await getVideos(); }
   catch (err) {
-    console.error('Erreur de chargement des vidéos :', err);
-    feed.innerHTML = '<div class="text-center text-zinc-500 py-20">Erreur de chargement des vidéos</div>';
+    console.error('Erreur de chargement :', err);
+    feed.innerHTML = '<div class="text-center text-zinc-500 py-20">Erreur de chargement</div>';
     return;
   }
 
+  document.getElementById('profile-videos-count').textContent = videos.length;
   if (videos.length === 0) {
     feed.innerHTML = '<div class="text-center text-zinc-500 py-20">Aucune vidéo pour le moment</div>';
-    document.getElementById('limit-overlay').classList.add('hidden');
     return;
   }
 
-  const maxVideos = isPremium ? videos.length : 2;
-  const visibleVideos = videos.slice(0, maxVideos);
-
-  visibleVideos.forEach((video) => {
+  videos.forEach((video) => {
     const slide = document.createElement('div');
     slide.className = 'video-slide relative';
-
     const videoEl = document.createElement('video');
     videoEl.className = 'video-player';
-    videoEl.loop = true;
-    videoEl.playsInline = true;
-    videoEl.preload = 'auto';
-    videoEl.muted = false;
-    videoEl.volume = 0.8;
-
+    videoEl.loop = true; videoEl.playsInline = true; videoEl.preload = 'auto';
+    videoEl.muted = false; videoEl.volume = 0.8;
     if (video.fileBlob) {
       const url = URL.createObjectURL(video.fileBlob);
-      currentObjectUrls.push(url);
-      videoEl.src = url;
-    } else {
-      videoEl.src = "https://assets.mixkit.co/videos/preview/4119/4119-small.mp4";
-    }
+      currentObjectUrls.push(url); videoEl.src = url;
+    } else { videoEl.src = "https://assets.mixkit.co/videos/preview/4119/4119-small.mp4"; }
 
-    // Loader
     const loader = document.createElement('div');
-    loader.className = 'video-loader';
-    loader.innerHTML = '<div class="spinner"></div>';
-
-    // Big play overlay
+    loader.className = 'video-loader'; loader.innerHTML = '<div class="spinner"></div>';
     const bigPlay = document.createElement('div');
-    bigPlay.className = 'big-play-btn';
-    bigPlay.innerHTML = '<i class="fas fa-play"></i>';
-
-    // Contrôles
+    bigPlay.className = 'big-play-btn'; bigPlay.innerHTML = '<i class="fas fa-play"></i>';
     const controls = document.createElement('div');
     controls.className = 'video-controls';
     controls.innerHTML = `
-      <div class="progress-bar-container" id="prog-${video.id}">
-        <div class="progress-bar-fill" id="fill-${video.id}"></div>
-      </div>
+      <div class="progress-bar-container" id="prog-${video.id}"><div class="progress-bar-fill" id="fill-${video.id}"></div></div>
       <div class="controls-row">
-        <button id="play-${video.id}" title="Play/Pause"><i class="fas fa-pause"></i></button>
-        <button id="back-${video.id}" title="-10s"><i class="fas fa-undo"></i></button>
-        <button id="fwd-${video.id}" title="+10s"><i class="fas fa-redo"></i></button>
+        <button id="play-${video.id}"><i class="fas fa-pause"></i></button>
+        <button id="back-${video.id}"><i class="fas fa-undo"></i></button>
+        <button id="fwd-${video.id}"><i class="fas fa-redo"></i></button>
         <div class="time-display" id="time-${video.id}">0:00 / 0:00</div>
         <div style="flex:1"></div>
-        <button class="volume-btn" id="vol-${video.id}" title="Volume">
-          <i class="fas fa-volume-up"></i>
-          <div class="volume-slider">
-            <input type="range" min="0" max="100" value="80" id="vol-range-${video.id}">
-          </div>
+        <button class="volume-btn" id="vol-${video.id}"><i class="fas fa-volume-up"></i>
+          <div class="volume-slider"><input type="range" min="0" max="100" value="80" id="vol-range-${video.id}"></div>
         </button>
-      </div>
-    `;
+      </div>`;
 
-    // Overlay gradient
-    const overlay = document.createElement('div');
-    overlay.className = 'absolute inset-0 video-overlay z-10';
-
-    // Badge 18+
+    const overlay = document.createElement('div'); overlay.className = 'absolute inset-0 video-overlay z-10';
     const badge = document.createElement('div');
     badge.className = 'absolute top-14 left-3 px-2 py-0.5 bg-red-600 text-[9px] font-bold rounded-full z-20';
     badge.textContent = '18+';
-
-    // Info titre/description
-    const info = document.createElement('div');
-    info.className = 'video-info';
-    info.innerHTML = `
-      <div class="font-bold text-base leading-tight">${escapeHtml(video.title)}</div>
-      <div class="text-xs text-zinc-300 mt-0.5 leading-tight">${escapeHtml(video.description || '')}</div>
-    `;
-
-    // Actions droite
-    const actions = document.createElement('div');
-    actions.className = 'video-actions-right';
+    const authorName = video.authorName || 'Beubeuland';
+    const info = document.createElement('div'); info.className = 'video-info';
+    info.innerHTML = `<div class="font-bold text-base leading-tight">${escapeHtml(video.title)}</div><div class="text-xs text-zinc-300 mt-0.5 leading-tight">${escapeHtml(video.description || '')}</div><div class="text-[10px] text-emerald-400 mt-1">@${escapeHtml(authorName)}</div>`;
+    const actions = document.createElement('div'); actions.className = 'video-actions-right';
     actions.innerHTML = `
-      <button onclick="likeVideo(this)" class="action-btn flex flex-col items-center gap-0.5">
-        <i class="fas fa-heart text-2xl"></i><span class="text-[10px]">124k</span>
-      </button>
-      <button onclick="openCommentModal(${video.id})" class="action-btn flex flex-col items-center gap-0.5">
-        <i class="fas fa-comment text-2xl"></i><span class="text-[10px]">8.4k</span>
-      </button>
-      <button onclick="shareVideo(${video.id})" class="action-btn flex flex-col items-center gap-0.5">
-        <i class="fas fa-share text-2xl"></i>
-      </button>
-    `;
+      <button onclick="likeVideo(this)" class="action-btn flex flex-col items-center gap-0.5"><i class="fas fa-heart text-2xl"></i><span class="text-[10px]">124k</span></button>
+      <button onclick="openCommentModal(${video.id})" class="action-btn flex flex-col items-center gap-0.5"><i class="fas fa-comment text-2xl"></i><span class="text-[10px]">8.4k</span></button>
+      <button onclick="shareVideo(${video.id})" class="action-btn flex flex-col items-center gap-0.5"><i class="fas fa-share text-2xl"></i></button>`;
 
-    // Assemblage
-    slide.appendChild(videoEl);
-    slide.appendChild(overlay);
-    slide.appendChild(badge);
-    slide.appendChild(info);
-    slide.appendChild(actions);
-    slide.appendChild(loader);
-    slide.appendChild(bigPlay);
-    slide.appendChild(controls);
-    feed.appendChild(slide);
-
+    slide.appendChild(videoEl); slide.appendChild(overlay); slide.appendChild(badge);
+    slide.appendChild(info); slide.appendChild(actions); slide.appendChild(loader);
+    slide.appendChild(bigPlay); slide.appendChild(controls); feed.appendChild(slide);
     setupVideoControls(videoEl, video.id, loader, bigPlay);
   });
-
-  if (!isPremium && videos.length > 2) {
-    document.getElementById('limit-overlay').classList.remove('hidden');
-  } else {
-    document.getElementById('limit-overlay').classList.add('hidden');
-  }
-
   setupAutoplayObserver();
 }
 
-/* ============================================================
-   CONTRÔLES VIDÉO
-============================================================ */
 function setupVideoControls(video, id, loader, bigPlay) {
   const playBtn = document.getElementById('play-' + id);
   const backBtn = document.getElementById('back-' + id);
@@ -530,59 +498,25 @@ function setupVideoControls(video, id, loader, bigPlay) {
   const timeDisplay = document.getElementById('time-' + id);
   const volBtn = document.getElementById('vol-' + id);
   const volRange = document.getElementById('vol-range-' + id);
-
   if (!playBtn || !video) return;
 
-  // Loader
   video.addEventListener('waiting', () => loader.classList.add('visible'));
   video.addEventListener('playing', () => loader.classList.remove('visible'));
   video.addEventListener('canplay', () => loader.classList.remove('visible'));
   video.addEventListener('canplaythrough', () => loader.classList.remove('visible'));
 
-  // Play/Pause
-  function togglePlay() {
-    if (video.paused) {
-      video.play().catch(e => console.log('play error:', e));
-    } else {
-      video.pause();
-    }
-  }
-
+  function togglePlay() { if (video.paused) video.play().catch(()=>{}); else video.pause(); }
   playBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlay(); });
-
-  video.addEventListener('play', () => {
-    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-    bigPlay.classList.remove('visible');
-    bigPlay.innerHTML = '<i class="fas fa-pause"></i>';
-  });
-  video.addEventListener('pause', () => {
-    playBtn.innerHTML = '<i class="fas fa-play"></i>';
-    bigPlay.classList.add('visible');
-    bigPlay.innerHTML = '<i class="fas fa-play"></i>';
-  });
-
+  video.addEventListener('play', () => { playBtn.innerHTML = '<i class="fas fa-pause"></i>'; bigPlay.classList.remove('visible'); bigPlay.innerHTML = '<i class="fas fa-pause"></i>'; });
+  video.addEventListener('pause', () => { playBtn.innerHTML = '<i class="fas fa-play"></i>'; bigPlay.classList.add('visible'); bigPlay.innerHTML = '<i class="fas fa-play"></i>'; });
   video.addEventListener('click', togglePlay);
 
-  // -10s / +10s
-  if (backBtn) {
-    backBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      video.currentTime = Math.max(0, video.currentTime - 10);
-    });
-  }
-  if (fwdBtn) {
-    fwdBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const dur = video.duration || 0;
-      video.currentTime = Math.min(dur, video.currentTime + 10);
-    });
-  }
+  if (backBtn) backBtn.addEventListener('click', (e) => { e.stopPropagation(); video.currentTime = Math.max(0, video.currentTime - 10); });
+  if (fwdBtn) fwdBtn.addEventListener('click', (e) => { e.stopPropagation(); video.currentTime = Math.min(video.duration || 0, video.currentTime + 10); });
 
-  // Progress bar
   video.addEventListener('timeupdate', () => {
     if (video.duration && isFinite(video.duration)) {
-      const pct = (video.currentTime / video.duration) * 100;
-      progFill.style.width = pct + '%';
+      progFill.style.width = ((video.currentTime / video.duration) * 100) + '%';
       timeDisplay.textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
     }
   });
@@ -591,67 +525,37 @@ function setupVideoControls(video, id, loader, bigPlay) {
     progContainer.addEventListener('click', (e) => {
       e.stopPropagation();
       const rect = progContainer.getBoundingClientRect();
-      const pct = (e.clientX - rect.left) / rect.width;
-      if (video.duration && isFinite(video.duration)) {
-        video.currentTime = pct * video.duration;
-      }
+      if (video.duration && isFinite(video.duration)) video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
     });
   }
 
-  // Volume
-  if (volRange) {
-    volRange.addEventListener('input', (e) => {
-      video.volume = e.target.value / 100;
-      video.muted = false;
-      updateVolumeIcon(video.volume, volBtn);
-    });
-  }
-  if (volBtn) {
-    volBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      video.muted = !video.muted;
-      updateVolumeIcon(video.muted ? 0 : video.volume, volBtn);
-    });
-  }
-
-  video.addEventListener('loadedmetadata', () => {
-    timeDisplay.textContent = '0:00 / ' + formatTime(video.duration);
-  });
+  video.volume = 0.8;
+  if (volRange) volRange.addEventListener('input', (e) => { video.volume = e.target.value / 100; video.muted = false; updateVolumeIcon(video.volume, volBtn); });
+  if (volBtn) volBtn.addEventListener('click', (e) => { e.stopPropagation(); video.muted = !video.muted; updateVolumeIcon(video.muted ? 0 : video.volume, volBtn); });
+  video.addEventListener('loadedmetadata', () => { timeDisplay.textContent = '0:00 / ' + formatTime(video.duration); });
 }
 
 function updateVolumeIcon(vol, btn) {
   if (!btn) return;
   const icon = btn.querySelector('i');
   if (!icon) return;
-  if (vol === 0) icon.className = 'fas fa-volume-mute';
-  else if (vol < 0.5) icon.className = 'fas fa-volume-down';
-  else icon.className = 'fas fa-volume-up';
+  icon.className = vol === 0 ? 'fas fa-volume-mute' : (vol < 0.5 ? 'fas fa-volume-down' : 'fas fa-volume-up');
 }
 
-/* ============================================================
-   AUTOPLAY
-============================================================ */
 function setupAutoplayObserver() {
   const slides = document.querySelectorAll('.video-slide video');
   if (!slides.length) return;
   feedObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       const vid = entry.target;
-      if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-        vid.play().catch(() => {});
-      } else {
-        vid.pause();
-      }
+      if (entry.isIntersecting && entry.intersectionRatio >= 0.6) vid.play().catch(()=>{});
+      else vid.pause();
     });
   }, { root: document.getElementById('tiktok-feed'), threshold: [0.6] });
   slides.forEach(vid => feedObserver.observe(vid));
 }
 
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
+function escapeHtml(str) { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
 function showSection(section) {
   document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
@@ -660,60 +564,55 @@ function showSection(section) {
   document.getElementById('nav-' + section).classList.add('active');
   if (section === 'feed') loadVideos();
   if (section === 'upload') updateUploadCount();
+  if (section === 'profile') checkWarnings();
 }
 
 function likeVideo(element) {
   const icon = element.querySelector('i');
-  if (icon) {
-    icon.style.color = '#ef4444';
-    setTimeout(() => icon.style.color = '', 800);
-  }
+  if (icon) { icon.style.color = '#ef4444'; setTimeout(() => icon.style.color = '', 800); }
 }
 function openCommentModal(id) { alert('Commentaires pour vidéo #' + id); }
-function shareVideo(id) {
-  navigator.clipboard.writeText('https://beubeuland.com/video/' + id);
-  alert('Lien copié !');
-}
+function shareVideo(id) { navigator.clipboard.writeText('https://beubeuland.com/video/' + id); alert('Lien copié !'); }
 
 function updateProfileStatus() {
   const status = document.getElementById('profile-status');
-  const btn = document.getElementById('subscribe-btn-profile');
-  const navProfile = document.getElementById('nav-profile');
-  const navUpload = document.getElementById('nav-upload');
+  const subscribeBtn = document.getElementById('subscribe-btn-profile');
+  const subActionBtn = document.getElementById('subscribe-action-btn');
+  const cancelBtn = document.getElementById('cancel-sub-btn');
   if (isPremium) {
-    status.innerHTML = '<i class="fas fa-check-circle"></i> <span>Abonnement Premium actif</span>';
-    if (btn) btn.style.display = 'none';
-    if (navProfile) navProfile.classList.remove('hidden');
-    if (navUpload) navUpload.classList.remove('hidden');
+    status.innerHTML = '<i class="fas fa-check-circle"></i> <span>Compte Premium actif</span>';
+    status.className = 'mt-5 px-5 py-1.5 bg-emerald-950 text-emerald-400 text-sm font-medium rounded-full flex items-center gap-2 border border-emerald-900';
+    if (subscribeBtn) subscribeBtn.style.display = 'none';
+    if (subActionBtn) { subActionBtn.textContent = 'Premium actif ✓'; subActionBtn.disabled = true; subActionBtn.classList.add('opacity-50'); }
+    if (cancelBtn) cancelBtn.classList.remove('hidden');
   } else {
     status.innerHTML = '<i class="fas fa-circle text-zinc-500"></i> <span>Compte gratuit</span>';
-    if (btn) btn.style.display = 'block';
-    if (navProfile) navProfile.classList.add('hidden');
-    if (navUpload) navUpload.classList.add('hidden');
+    status.className = 'mt-5 px-5 py-1.5 bg-zinc-800 text-zinc-400 text-sm font-medium rounded-full flex items-center gap-2 border border-zinc-700';
+    if (subscribeBtn) { subscribeBtn.style.display = 'block'; subscribeBtn.textContent = 'Activer Premium'; }
+    if (subActionBtn) { subActionBtn.textContent = 'Activer Premium gratuitement'; subActionBtn.disabled = false; subActionBtn.classList.remove('opacity-50'); }
+    if (cancelBtn) cancelBtn.classList.add('hidden');
   }
 }
-function subscribeUser() {
+
+async function subscribeUser() {
   isPremium = true;
   localStorage.setItem('beubeuland_premium', 'true');
   uploadsToday = 0;
   localStorage.setItem('beubeuland_uploads_today', '0');
+  await saveUserProfile(getProfile());
   updateProfileStatus();
-  alert('✅ Abonnement Premium activé !');
+  alert('✅ Premium activé ! Tu peux personnaliser ton profil et uploader 3 vidéos par jour.');
   showSection('profile');
 }
 function subscribeFromProfile() { showSection('subscription'); }
-function cancelSubscription() {
-  if (confirm("Annuler l'abonnement ?")) {
-    isPremium = false;
-    localStorage.setItem('beubeuland_premium', 'false');
-    updateProfileStatus();
-    showSection('profile');
+async function cancelSubscription() {
+  if (confirm("Désactiver Premium ?")) {
+    isPremium = false; localStorage.setItem('beubeuland_premium', 'false');
+    await saveUserProfile(getProfile()); updateProfileStatus(); showSection('profile');
   }
 }
-function updateUploadCount() {
-  const el = document.getElementById('upload-count');
-  if (el) el.innerText = uploadsToday;
-}
+function updateUploadCount() { const el = document.getElementById('upload-count'); if (el) el.innerText = uploadsToday; }
+
 function handleVideoUpload(input) {
   if (!input.files.length) return;
   const file = input.files[0];
@@ -722,29 +621,22 @@ function handleVideoUpload(input) {
   document.getElementById('upload-dropzone').classList.add('hidden');
   document.getElementById('upload-form').classList.remove('hidden');
 }
+
 async function publishVideo() {
   const title = document.getElementById('video-title').value.trim();
   if (!title) { alert('Titre requis'); return; }
-  if (uploadsToday >= 3) { alert('Limite atteinte'); return; }
+  if (uploadsToday >= 3) { alert('Limite atteinte (3 vidéos/jour). Reviens demain !'); return; }
   const input = document.getElementById('upload-input');
   const file = input.files[0];
   if (!file) { alert('Aucun fichier sélectionné'); return; }
   const publishBtn = document.getElementById('publish-btn');
   const progressEl = document.getElementById('upload-progress');
-  publishBtn.disabled = true;
-  publishBtn.textContent = 'Publication en cours...';
-  progressEl.classList.add('visible');
-  progressEl.textContent = 'Enregistrement de la vidéo...';
+  publishBtn.disabled = true; publishBtn.textContent = 'Publication en cours...';
+  progressEl.classList.add('visible'); progressEl.textContent = 'Enregistrement...';
   try {
-    await saveVideo({
-      id: Date.now(),
-      title: title,
-      description: document.getElementById('video-desc').value,
-      fileBlob: file,
-      created_at: new Date().toISOString()
-    });
-    uploadsToday++;
-    localStorage.setItem('beubeuland_uploads_today', uploadsToday);
+    const profile = getProfile();
+    await saveVideo({ id: Date.now(), title: title, description: document.getElementById('video-desc').value, fileBlob: file, authorId: getUserId(), authorName: profile.name, created_at: new Date().toISOString() });
+    uploadsToday++; localStorage.setItem('beubeuland_uploads_today', uploadsToday);
     alert('✅ Vidéo publiée !');
     document.getElementById('upload-form').classList.add('hidden');
     document.getElementById('upload-dropzone').classList.remove('hidden');
@@ -753,23 +645,20 @@ async function publishVideo() {
     input.value = '';
     showSection('feed');
   } catch (err) {
-    console.error('Erreur de publication :', err);
-    alert('❌ Erreur lors de la publication de la vidéo');
+    console.error('Erreur :', err); alert('❌ Erreur lors de la publication');
   } finally {
-    publishBtn.disabled = false;
-    publishBtn.textContent = 'Publier la vidéo';
+    publishBtn.disabled = false; publishBtn.textContent = 'Publier la vidéo';
     progressEl.classList.remove('visible');
   }
 }
-function init() {
-  if (localStorage.getItem('beubeuland_premium') === null) {
-    localStorage.setItem('beubeuland_premium', 'false');
-  }
+
+async function init() {
+  if (localStorage.getItem('beubeuland_premium') === null) localStorage.setItem('beubeuland_premium', 'false');
+  await loadUserProfile(); renderProfile();
   document.querySelectorAll('.section').forEach(el => el.style.display = 'none');
   document.getElementById('section-feed').style.display = 'block';
   document.getElementById('nav-feed').classList.add('active');
-  updateProfileStatus();
-  loadVideos();
+  updateProfileStatus(); loadVideos();
 }
 window.onload = init;
 </script>
