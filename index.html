@@ -867,9 +867,10 @@ async function publishVideo() {
 /* ========== INIT ========== */
 
 /* ========== MODE DÉVELOPPEUR ========== */
-let devPressTimer = null;
-let devPressStart = 0;
-const DEV_PRESS_DURATION = 2000;
+let devClickCount = 0;
+let devClickTimer = null;
+const DEV_CLICK_TARGET = 3;
+const DEV_CLICK_WINDOW = 800;
 
 function initDevMode() {
   const logo = document.getElementById('dev-logo');
@@ -879,35 +880,22 @@ function initDevMode() {
     activateDevMode(false);
   }
 
-  logo.addEventListener('touchstart', startDevPress, { passive: false });
-  logo.addEventListener('touchend', endDevPress);
-  logo.addEventListener('touchcancel', endDevPress);
-  logo.addEventListener('mousedown', startDevPress);
-  logo.addEventListener('mouseup', endDevPress);
-  logo.addEventListener('mouseleave', endDevPress);
+  logo.addEventListener('click', handleDevClick);
 }
 
-function startDevPress(e) {
-  if (e.preventDefault) e.preventDefault();
-  devPressStart = Date.now();
-  devPressTimer = setTimeout(() => {
+function handleDevClick(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  devClickCount++;
+
+  if (devClickCount === 1) {
+    devClickTimer = setTimeout(() => { devClickCount = 0; }, DEV_CLICK_WINDOW);
+  }
+
+  if (devClickCount >= DEV_CLICK_TARGET) {
+    clearTimeout(devClickTimer);
+    devClickCount = 0;
     activateDevMode(true);
-  }, DEV_PRESS_DURATION);
-  const logo = document.getElementById('dev-logo');
-  if (logo) {
-    logo.style.transform = 'scale(0.85)';
-    logo.style.transition = 'transform 0.2s';
-  }
-}
-
-function endDevPress(e) {
-  if (devPressTimer) {
-    clearTimeout(devPressTimer);
-    devPressTimer = null;
-  }
-  const logo = document.getElementById('dev-logo');
-  if (logo) {
-    logo.style.transform = 'scale(1)';
   }
 }
 
