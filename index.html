@@ -411,7 +411,7 @@ body {
 
 <script>
 const DB_NAME = 'beubeuland_db';
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 const STORE_VIDEOS = 'videos';
 const STORE_USERS = 'users';
 const STORE_LIKES = 'likes';
@@ -747,13 +747,15 @@ async function loadVideos() {
     info.innerHTML = `<div class="font-bold text-base leading-tight">${escapeHtml(video.title)}</div><div class="text-xs text-zinc-300 mt-0.5 leading-tight">${escapeHtml(video.description || '')}</div><div class="text-[10px] text-emerald-400 mt-1">@${escapeHtml(authorName)}</div>`;
 
     const likeClass = userLiked ? 'liked' : '';
+    const comments = await getCommentsForVideo(video.id);
+    const commentCount = comments.length;
     const actions = document.createElement('div'); actions.className = 'video-actions-right';
     actions.innerHTML = `
       <button onclick="handleLike(this, ${video.id})" class="action-btn flex flex-col items-center gap-0.5 ${likeClass}" id="like-btn-${video.id}">
         <i class="fas fa-heart text-2xl"></i><span class="text-[10px]" id="like-count-${video.id}">${likeCount}</span>
       </button>
       <button onclick="openCommentModal(${video.id})" class="action-btn flex flex-col items-center gap-0.5">
-        <i class="fas fa-comment text-2xl"></i><span class="text-[10px]" id="comment-count-${video.id}">${await getCommentsForVideo(video.id).then(c => c.length)}</span>
+        <i class="fas fa-comment text-2xl"></i><span class="text-[10px]" id="comment-count-${video.id}">${commentCount}</span>
       </button>
       <button onclick="shareVideo(${video.id})" class="action-btn flex flex-col items-center gap-0.5">
         <i class="fas fa-share text-2xl"></i>
