@@ -32,9 +32,7 @@ body {
   height: 100%;
 }
 .tiktok-feed::-webkit-scrollbar { display: none; }
-.tiktok-feed .video-slide {
-  scroll-snap-stop: always;
-}
+.tiktok-feed .video-slide { scroll-snap-stop: always; }
 
 .video-slide { 
   scroll-snap-align: start; 
@@ -114,24 +112,13 @@ body {
   border: none; 
   cursor: pointer; 
 }
-.action-btn i { 
-  transition: color 0.2s ease; 
-}
-.action-btn.liked i { 
-  color: #ef4444; 
-}
-.action-btn.liked span { 
-  color: #ef4444; 
-}
+.action-btn i { transition: color 0.2s ease; }
+.action-btn.liked i { color: #ef4444; }
+.action-btn.liked span { color: #ef4444; }
 
-#upload-progress { 
-  display: none; 
-}
-#upload-progress.visible { 
-  display: block; 
-}
+#upload-progress { display: none; }
+#upload-progress.visible { display: block; }
 
-/* Video Controls */
 .video-controls {
   position: absolute;
   bottom: 0;
@@ -171,9 +158,7 @@ body {
   background: rgba(255,255,255,0.4); 
   transform: scale(1.08); 
 }
-.controls-row button:active { 
-  transform: scale(0.95); 
-}
+.controls-row button:active { transform: scale(0.95); }
 .progress-bar-container { 
   flex: 1; 
   height: 5px; 
@@ -198,9 +183,7 @@ body {
   flex-shrink: 0; 
   font-weight: 500; 
 }
-.volume-btn { 
-  position: relative; 
-}
+.volume-btn { position: relative; }
 .volume-slider {
   position: absolute; 
   bottom: 44px; 
@@ -216,9 +199,7 @@ body {
   justify-content: center;
   border: 1px solid rgba(255,255,255,0.1);
 }
-.volume-btn:hover .volume-slider { 
-  display: flex; 
-}
+.volume-btn:hover .volume-slider { display: flex; }
 .volume-slider input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -254,9 +235,7 @@ body {
   z-index: 15; 
   display: none; 
 }
-.video-loader.visible { 
-  display: block; 
-}
+.video-loader.visible { display: block; }
 .spinner { 
   width: 32px; 
   height: 32px; 
@@ -265,9 +244,7 @@ body {
   border-radius: 50%; 
   animation: spin 0.7s linear infinite; 
 }
-@keyframes spin { 
-  to { transform: rotate(360deg); } 
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .big-play-btn {
   position: absolute; 
@@ -309,10 +286,7 @@ body {
   align-items: center; 
   height: 36px;
 }
-.app-header .logo-text { 
-  font-weight: 700; 
-  font-size: 15px; 
-}
+.app-header .logo-text { font-weight: 700; font-size: 15px; }
 .app-header .discord-btn {
   display: flex; 
   align-items: center; 
@@ -325,9 +299,7 @@ body {
   border-radius: 20px; 
   text-decoration: none;
 }
-.app-header .discord-btn:hover { 
-  background: #4752C4; 
-}
+.app-header .discord-btn:hover { background: #4752C4; }
 
 .video-info { 
   position: absolute; 
@@ -358,9 +330,7 @@ body {
   justify-content: center; 
   padding: 20px;
 }
-.profile-edit-modal.visible { 
-  display: flex; 
-}
+.profile-edit-modal.visible { display: flex; }
 .profile-edit-box { 
   background: #18181b; 
   border-radius: 24px; 
@@ -378,10 +348,7 @@ body {
   align-items: center; 
   justify-content: center;
 }
-.limit-box { 
-  text-align: center; 
-  padding: 32px; 
-}
+.limit-box { text-align: center; padding: 32px; }
 
 .stripe-btn {
   display: inline-flex; 
@@ -401,7 +368,7 @@ body {
   transform: translateY(-1px); 
 }
 
-/* FIXED: Sections are hidden by default, shown via JS */
+/* FIXED: Sections hidden by default, shown via JS */
 .section { 
   display: none !important;
   flex: 1;
@@ -412,13 +379,11 @@ body {
   display: flex !important;
   flex-direction: column;
 }
-/* For non-feed sections that need block display */
 .section.active.block-section {
   display: block !important;
   overflow-y: auto;
 }
 
-/* Expanded video mode (simple fullscreen) */
 .video-slide.expanded {
   position: fixed !important;
   inset: 0 !important;
@@ -441,15 +406,9 @@ body {
   right: 0 !important;
   z-index: 210 !important;
 }
-.video-slide.expanded .video-info {
-  bottom: 80px !important;
-}
-.video-slide.expanded .video-actions-right {
-  bottom: 80px !important;
-}
-.video-slide.expanded .app-header {
-  display: none !important;
-}
+.video-slide.expanded .video-info { bottom: 80px !important; }
+.video-slide.expanded .video-actions-right { bottom: 80px !important; }
+.video-slide.expanded .app-header { display: none !important; }
 
 @keyframes devToastIn {
   from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
@@ -461,46 +420,20 @@ body {
 }
 
 @media (max-height: 700px) {
-  .demo-container {
-    border-width: 6px;
-    border-radius: 24px;
-  }
-  .app-header {
-    padding: 4px 10px;
-    height: 32px;
-  }
-  .video-controls {
-    padding: 6px 10px 8px;
-  }
-  .video-info {
-    bottom: 64px;
-  }
-  .video-actions-right {
-    bottom: 64px;
-  }
+  .demo-container { border-width: 6px; border-radius: 24px; }
+  .app-header { padding: 4px 10px; height: 32px; }
+  .video-controls { padding: 6px 10px 8px; }
+  .video-info { bottom: 64px; }
+  .video-actions-right { bottom: 64px; }
 }
 
 @media (max-height: 600px) {
-  .demo-container {
-    border-width: 4px;
-    border-radius: 16px;
-  }
-  .app-header {
-    padding: 2px 8px;
-    height: 28px;
-  }
-  .app-header .logo-text {
-    font-size: 13px;
-  }
-  .video-controls {
-    padding: 4px 8px 6px;
-  }
-  .video-info {
-    bottom: 56px;
-  }
-  .video-actions-right {
-    bottom: 56px;
-  }
+  .demo-container { border-width: 4px; border-radius: 16px; }
+  .app-header { padding: 2px 8px; height: 28px; }
+  .app-header .logo-text { font-size: 13px; }
+  .video-controls { padding: 4px 8px 6px; }
+  .video-info { bottom: 56px; }
+  .video-actions-right { bottom: 56px; }
 }
 </style>
 <base target="_blank">
@@ -552,7 +485,7 @@ body {
           <div class="font-bold text-2xl">Limite atteinte</div>
           <p class="text-sm mt-3 text-white/70">Passe Premium pour voir toutes les videos</p>
           <div class="mt-6" id="limit-btn-container">
-            <a href="https://buy.stripe.com/test_28EdR839SdnQewH4Auew809" target="_blank" onclick="sessionStorage.setItem('beubeuland_from_stripe','true')" class="stripe-btn" style="text-decoration:none;">
+            <a href="https://buy.stripe.com/test_28EdR839SdnQewH4Auew809" target="_blank" onclick="onStripeClick()" class="stripe-btn" style="text-decoration:none;">
               <i class="fas fa-crown"></i> S'abonner &bull; Debloquer tout
             </a>
           </div>
@@ -617,20 +550,33 @@ body {
         </div>
       </div>
       <div class="space-y-3">
+        <!-- Bouton normal S'abonner -->
         <div id="sub-btn-normal">
-          <a href="https://buy.stripe.com/3cIfZgh0IbfIewH2smew80k" target="_blank" onclick="sessionStorage.setItem('beubeuland_from_stripe','true')" class="w-full flex items-center justify-center gap-2 py-4 bg-white text-black font-semibold rounded-2xl text-sm" style="text-decoration:none;">
+          <a href="https://buy.stripe.com/test_28EdR839SdnQewH4Auew809" target="_blank" onclick="onStripeClick()" class="w-full flex items-center justify-center gap-2 py-4 bg-white text-black font-semibold rounded-2xl text-sm" style="text-decoration:none;">
             <i class="fas fa-credit-card"></i> S'abonner maintenant
           </a>
         </div>
 
+        <!-- Bouton Activer (apparait apres paiement Stripe) -->
         <div id="sub-btn-activate" style="display:none;">
-          <button onclick="verifyStripePayment()" class="w-full flex items-center justify-center gap-2 py-4 bg-emerald-600 text-white font-semibold rounded-2xl text-sm cursor-pointer border-none">
+          <button onclick="activatePremiumDirect()" class="w-full flex items-center justify-center gap-2 py-4 bg-emerald-600 text-white font-semibold rounded-2xl text-sm cursor-pointer border-none">
             <i class="fas fa-check-circle"></i> Activer mon Premium
           </button>
           <div style="text-align:center;font-size:11px;color:#a1a1aa;margin-top:8px;">
-            <i class="fas fa-info-circle"></i> Paiement Stripe detecte &mdash; cliquez pour activer
+            <i class="fas fa-info-circle"></i> Paiement confirme sur Stripe &mdash; cliquez pour activer
           </div>
         </div>
+
+        <!-- Bouton J'ai deja paye (fallback si retour sans session_id) -->
+        <div id="sub-btn-already-paid" style="display:none;">
+          <button onclick="activatePremiumDirect()" class="w-full flex items-center justify-center gap-2 py-4 bg-zinc-700 text-white font-semibold rounded-2xl text-sm cursor-pointer border-none">
+            <i class="fas fa-check-circle"></i> J'ai deja paye
+          </button>
+          <div style="text-align:center;font-size:11px;color:#a1a1aa;margin-top:8px;">
+            <i class="fas fa-info-circle"></i> Si vous avez deja paye sur Stripe, cliquez ici
+          </div>
+        </div>
+
         <button id="cancel-sub-btn" onclick="cancelSubscription()" class="w-full py-3.5 bg-zinc-800 text-zinc-300 text-sm font-medium rounded-2xl hidden">Annuler mon abonnement</button>
         <a href="https://discord.gg/a2HexAGYK" target="_blank" class="w-full flex items-center justify-center gap-2 py-3.5 bg-[#5865F2] hover:bg-[#4752C4] rounded-2xl text-sm font-semibold" style="text-decoration:none;">
           <i class="fab fa-discord"></i> Rejoins sur Discord
@@ -673,27 +619,8 @@ body {
     <div id="comments-count" style="font-size:11px;color:#a1a1aa;margin-bottom:8px;">0 commentaire</div>
     <div id="comments-list" style="flex:1;overflow-y:auto;min-height:0;margin-bottom:12px;"></div>
     <div style="display:flex;gap:8px;border-top:1px solid #27272a;padding-top:12px;">
-      <input type="text" id="comment-input" placeholder="Ajouter un commentaire..." style="
-        flex:1;
-        padding:10px 14px;
-        background:#0f0f11;
-        border:1px solid #27272a;
-        border-radius:12px;
-        color:#fafafa;
-        font-size:14px;
-        outline:none;
-      " onkeydown="if(event.key==='Enter')submitComment()">
-      <button onclick="submitComment()" style="
-        padding:10px 16px;
-        background:#10b981;
-        border:none;
-        border-radius:12px;
-        color:#fff;
-        font-size:13px;
-        font-weight:600;
-        cursor:pointer;
-        flex-shrink:0;
-      "><i class="fas fa-paper-plane"></i></button>
+      <input type="text" id="comment-input" placeholder="Ajouter un commentaire..." style="flex:1;padding:10px 14px;background:#0f0f11;border:1px solid #27272a;border-radius:12px;color:#fafafa;font-size:14px;outline:none;" onkeydown="if(event.key==='Enter')submitComment()">
+      <button onclick="submitComment()" style="padding:10px 16px;background:#10b981;border:none;border-radius:12px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0;"><i class="fas fa-paper-plane"></i></button>
     </div>
   </div>
 </div>
@@ -727,96 +654,26 @@ body {
 </div>
 
 <!-- Modal Code Developpeur -->
-<div id="dev-code-modal" style="
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  backdrop-filter: blur(4px);
-  z-index: 300;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-">
-  <div style="
-    background: #18181b;
-    border: 1px solid #27272a;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 340px;
-    padding: 24px;
-    text-align: center;
-  ">
+<div id="dev-code-modal" style="position: fixed;inset: 0;background: rgba(0,0,0,0.7);backdrop-filter: blur(4px);z-index: 300;display: none;align-items: center;justify-content: center;padding: 20px;">
+  <div style="background: #18181b;border: 1px solid #27272a;border-radius: 20px;width: 100%;max-width: 340px;padding: 24px;text-align: center;">
     <div style="font-size: 20px; margin-bottom: 4px;">&#128274;</div>
     <div style="font-weight: 700; font-size: 16px; margin-bottom: 4px;">Mode Developpeur</div>
     <div style="font-size: 12px; color: #a1a1aa; margin-bottom: 16px;">Entrez le code d'acces</div>
-    <input type="password" id="dev-code-input" placeholder="Code" style="
-      width: 100%;
-      padding: 14px 16px;
-      background: #0f0f11;
-      border: 1px solid #27272a;
-      border-radius: 12px;
-      color: #fafafa;
-      font-size: 15px;
-      text-align: center;
-      letter-spacing: 4px;
-      outline: none;
-      margin-bottom: 12px;
-    " onkeydown="if(event.key==='Enter')checkDevCode()">
+    <input type="password" id="dev-code-input" placeholder="Code" style="width: 100%;padding: 14px 16px;background: #0f0f11;border: 1px solid #27272a;border-radius: 12px;color: #fafafa;font-size: 15px;text-align: center;letter-spacing: 4px;outline: none;margin-bottom: 12px;" onkeydown="if(event.key==='Enter')checkDevCode()">
     <div id="dev-code-error" style="font-size: 11px; color: #ef4444; margin-bottom: 12px; display: none;">Code incorrect</div>
     <div style="display: flex; gap: 8px;">
-      <button onclick="closeDevCodeModal()" style="
-        flex: 1;
-        padding: 12px;
-        background: #27272a;
-        border: none;
-        border-radius: 12px;
-        color: #d4d4d8;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-      ">Annuler</button>
-      <button onclick="checkDevCode()" style="
-        flex: 1;
-        padding: 12px;
-        background: #10b981;
-        border: none;
-        border-radius: 12px;
-        color: #fff;
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-      ">Valider</button>
+      <button onclick="closeDevCodeModal()" style="flex: 1;padding: 12px;background: #27272a;border: none;border-radius: 12px;color: #d4d4d8;font-size: 13px;font-weight: 600;cursor: pointer;">Annuler</button>
+      <button onclick="checkDevCode()" style="flex: 1;padding: 12px;background: #10b981;border: none;border-radius: 12px;color: #fff;font-size: 13px;font-weight: 600;cursor: pointer;">Valider</button>
     </div>
   </div>
 </div>
 
 <!-- Bouton Mode Developpeur -->
-<button id="dev-btn" onclick="openDevCodeModal()" style="
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 32px;
-  height: 32px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 8px;
-  color: rgba(255,255,255,0.25);
-  font-size: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.color='rgba(255,255,255,0.6)'" 
-onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='rgba(255,255,255,0.25)'">
-  D
-</button>
+<button id="dev-btn" onclick="openDevCodeModal()" style="position: fixed;bottom: 20px;right: 20px;width: 32px;height: 32px;background: rgba(255,255,255,0.05);border: 1px solid rgba(255,255,255,0.08);border-radius: 8px;color: rgba(255,255,255,0.25);font-size: 10px;font-weight: 700;cursor: pointer;z-index: 50;display: flex;align-items: center;justify-content: center;transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.color='rgba(255,255,255,0.6)'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.color='rgba(255,255,255,0.25)'">D</button>
 <script>
 const API_URL = 'https://beubeu-feed.onrender.com/api';
 const DEV_CODE = 'sil55201';
+const STRIPE_LINK = 'https://buy.stripe.com/test_28EdR839SdnQewH4Auew809';
 
 const DB_NAME = 'beubeuland_db';
 const DB_VERSION = 3;
@@ -848,11 +705,7 @@ async function saveToStore(store, data) {
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
     tx.onabort = () => reject(new Error('Transaction aborted'));
-    try {
-      tx.objectStore(store).put(data);
-    } catch (e) {
-      reject(e);
-    }
+    try { tx.objectStore(store).put(data); } catch (e) { reject(e); }
   });
 }
 
@@ -884,11 +737,7 @@ async function deleteFromStore(store, key) {
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
     tx.onabort = () => reject(new Error('Transaction aborted'));
-    try {
-      tx.objectStore(store).delete(key);
-    } catch (e) {
-      reject(e);
-    }
+    try { tx.objectStore(store).delete(key); } catch (e) { reject(e); }
   });
 }
 
@@ -1074,7 +923,7 @@ async function submitComment() {
 }
 
 /* ========== STATE ========== */
-let isPremium = false; // FIXED: Default to FREE
+let isPremium = false;
 let uploadsToday = 0;
 let currentObjectUrls = [];
 let feedObserver = null;
@@ -1120,7 +969,6 @@ function updateNavVisibility() {
 }
 
 function showSection(section) {
-  // FIXED: Properly hide all sections using CSS classes only
   document.querySelectorAll('.section').forEach(el => {
     el.classList.remove('active');
   });
@@ -1481,7 +1329,77 @@ function shareVideo(id) {
   }
 }
 
-/* ========== SUBSCRIPTION ========== */
+/* ========== STRIPE SUBSCRIPTION FLOW ========== */
+
+// Called when user clicks "S'abonner" button
+function onStripeClick() {
+  // Mark that user initiated a Stripe payment
+  localStorage.setItem('beubeuland_stripe_pending', 'true');
+  localStorage.setItem('beubeuland_stripe_pending_time', Date.now().toString());
+}
+
+// Check if user returned from Stripe with success
+function checkStripeReturn() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const sessionId = urlParams.get('session_id');
+  const hasSuccess = urlParams.get('success') === '1' || urlParams.get('payment') === 'success';
+
+  // If Stripe redirected back with session_id or success param
+  if (sessionId || hasSuccess) {
+    localStorage.setItem('beubeuland_stripe_pending', 'true');
+    if (sessionId) {
+      localStorage.setItem('beubeuland_stripe_session', sessionId);
+    }
+    // Clean URL
+    window.history.replaceState({}, document.title, window.location.pathname);
+    return true;
+  }
+
+  // Also check if there's a pending payment flag (user clicked S'abonner)
+  const pending = localStorage.getItem('beubeuland_stripe_pending');
+  const pendingTime = parseInt(localStorage.getItem('beubeuland_stripe_pending_time') || '0', 10);
+  const now = Date.now();
+
+  // Pending flag expires after 30 minutes
+  if (pending === 'true' && (now - pendingTime) < 30 * 60 * 1000) {
+    return true;
+  }
+
+  return false;
+}
+
+// Update subscription buttons visibility
+function updateSubscriptionButtons() {
+  const normalBtn = document.getElementById('sub-btn-normal');
+  const activateBtn = document.getElementById('sub-btn-activate');
+  const alreadyPaidBtn = document.getElementById('sub-btn-already-paid');
+  const cancelBtn = document.getElementById('cancel-sub-btn');
+
+  if (!normalBtn || !activateBtn) return;
+
+  const hasPendingPayment = checkStripeReturn();
+
+  if (isPremium) {
+    // Premium active: hide all payment buttons, show cancel
+    normalBtn.style.display = 'none';
+    activateBtn.style.display = 'none';
+    if (alreadyPaidBtn) alreadyPaidBtn.style.display = 'none';
+    if (cancelBtn) cancelBtn.classList.remove('hidden');
+  } else if (hasPendingPayment) {
+    // Payment pending/returned from Stripe: show activate button
+    normalBtn.style.display = 'none';
+    activateBtn.style.display = 'block';
+    if (alreadyPaidBtn) alreadyPaidBtn.style.display = 'none';
+    if (cancelBtn) cancelBtn.classList.add('hidden');
+  } else {
+    // No payment yet: show normal subscribe button
+    normalBtn.style.display = 'block';
+    activateBtn.style.display = 'none';
+    if (alreadyPaidBtn) alreadyPaidBtn.style.display = 'none';
+    if (cancelBtn) cancelBtn.classList.add('hidden');
+  }
+}
+
 function updateProfileStatus() {
   const status = document.getElementById('profile-status');
   const cancelBtn = document.getElementById('cancel-sub-btn');
@@ -1508,8 +1426,25 @@ function updateProfileStatus() {
   }
 }
 
-function activatePremium() {
-  activatePremiumDirect();
+function activatePremiumDirect() {
+  isPremium = true;
+  localStorage.setItem('beubeuland_premium', 'true');
+  localStorage.setItem('beubeuland_premium_activated_at', new Date().toISOString());
+
+  // Clear pending flags
+  localStorage.removeItem('beubeuland_stripe_pending');
+  localStorage.removeItem('beubeuland_stripe_pending_time');
+  localStorage.removeItem('beubeuland_stripe_session');
+
+  uploadsToday = 0;
+  localStorage.setItem('beubeuland_uploads_today', '0');
+  saveUserProfile(getProfile());
+  updateProfileStatus();
+  updateNavVisibility();
+  updateSubscriptionButtons();
+  showDevToast('✅ Premium active !');
+  loadVideos();
+  showSection('feed');
 }
 
 function cancelSubscription() {
@@ -1521,92 +1456,9 @@ function cancelSubscription() {
     saveUserProfile(getProfile());
     updateProfileStatus();
     updateNavVisibility();
+    updateSubscriptionButtons();
     showSection('feed');
   }
-}
-
-/* ========== STRIPE VERIFICATION SECURISEE ========== */
-function checkStripeReturn() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const sessionId = urlParams.get('session_id') || urlParams.get('checkout_session_id');
-  const hasSuccess = urlParams.get('success') === '1' || urlParams.get('payment') === 'success';
-  const fromStripe = sessionStorage.getItem('beubeuland_from_stripe') === 'true';
-
-  if (sessionId || hasSuccess) {
-    sessionStorage.setItem('beubeuland_from_stripe', 'true');
-    sessionStorage.setItem('beubeuland_stripe_session', sessionId || '');
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-
-  const normalBtn = document.getElementById('sub-btn-normal');
-  const activateBtn = document.getElementById('sub-btn-activate');
-  if (normalBtn && activateBtn) {
-    if (fromStripe || sessionId || hasSuccess) {
-      normalBtn.style.display = 'none';
-      activateBtn.style.display = 'block';
-      setTimeout(function() {
-        if (!isPremium && (sessionStorage.getItem('beubeuland_from_stripe') === 'true')) {
-          activatePremiumDirect();
-        }
-      }, 1500);
-    } else {
-      normalBtn.style.display = 'block';
-      activateBtn.style.display = 'none';
-    }
-  }
-}
-
-async function verifyStripePayment() {
-  const sessionId = sessionStorage.getItem('beubeuland_stripe_session');
-  const hasSuccess = sessionStorage.getItem('beubeuland_from_stripe') === 'true';
-
-  if (!sessionId && !hasSuccess) {
-    showDevToast('❌ Aucune session de paiement trouvee');
-    return;
-  }
-
-  try {
-    const userId = getUserId();
-    const res = await fetch(API_URL + '/verify-payment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sessionId, userId }),
-      signal: AbortSignal.timeout(5000)
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success) {
-        activatePremiumDirect();
-        return;
-      }
-    }
-  } catch (err) {
-    console.warn('Verification serveur indisponible:', err);
-  }
-
-  if (hasSuccess || sessionId) {
-    activatePremiumDirect();
-  } else {
-    showDevToast('❌ Impossible de verifier le paiement. Contacte le support.');
-  }
-}
-
-function activatePremiumDirect() {
-  isPremium = true;
-  localStorage.setItem('beubeuland_premium', 'true');
-  localStorage.setItem('beubeuland_premium_activated_at', new Date().toISOString());
-  uploadsToday = 0;
-  localStorage.setItem('beubeuland_uploads_today', '0');
-  sessionStorage.removeItem('beubeuland_from_stripe');
-  sessionStorage.removeItem('beubeuland_stripe_session');
-  sessionStorage.removeItem('beubeuland_activation_token');
-  saveUserProfile(getProfile());
-  updateProfileStatus();
-  updateNavVisibility();
-  showDevToast('✅ Premium active !');
-  loadVideos();
-  showSection('feed');
 }
 
 /* ========== UPLOAD ========== */
@@ -1687,6 +1539,7 @@ function activateDevMode(showAlert) {
   localStorage.setItem('beubeuland_uploads_today', '0');
   updateNavVisibility();
   updateProfileStatus();
+  updateSubscriptionButtons();
   const profileTab = document.getElementById('nav-profile');
   const uploadTab = document.getElementById('nav-upload');
   if (profileTab) profileTab.classList.remove('hidden');
@@ -1703,6 +1556,7 @@ function deactivateDevMode() {
   localStorage.setItem('beubeuland_uploads_today', '0');
   updateNavVisibility();
   updateProfileStatus();
+  updateSubscriptionButtons();
   loadVideos();
   showDevToast('🔒 Mode Developpeur desactive');
 }
@@ -1760,7 +1614,7 @@ document.addEventListener('keydown', function(e) {
 
 /* ========== INIT ========== */
 async function init() {
-  // FIXED: Always default to free unless explicitly premium
+  // Load premium state from localStorage
   const storedPremium = localStorage.getItem('beubeuland_premium');
   if (storedPremium === 'true') {
     isPremium = true;
@@ -1769,14 +1623,13 @@ async function init() {
     localStorage.setItem('beubeuland_premium', 'false');
   }
 
-  checkStripeReturn();
-
   await loadUserProfile();
   renderProfile();
   initDevMode();
   updateNavVisibility();
+  updateSubscriptionButtons();
 
-  // FIXED: Ensure only feed section is active on init
+  // Ensure only feed section is active on init
   document.querySelectorAll('.section').forEach(el => {
     el.classList.remove('active');
   });
