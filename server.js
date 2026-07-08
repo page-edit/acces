@@ -1,5 +1,3 @@
-// server.js - Backend Node.js pour verification Stripe
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -8,86 +6,134 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Stockage en memoire des paiements verifies (en prod: utiliser une vraie DB)
+// In-memory store for verified payments (use Redis/DB in production)
 const verifiedPayments = new Map();
 
-// ============================================
-// VERIFICATION SERVEUR - OBLIGATOIRE
-// ============================================
+// ========== VERIFY PAYMENT ==========
 app.post('/api/verify-payment', async (req, res) => {
   try {
     const { sessionId, userId } = req.body;
 
-    if (!sessionId) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'session_id manquant' 
-      });
+    if (!sessionId || !userId) {
+      return res.status(400).json({ success: false, error: 'Missing sessionId or userId' });
     }
 
-    // VERIFICATION REELLE AVEC L'API STRIPE
+    // Check if already verified
+    if (verifiedPayments.has(sessionId)) {
+      const data = verifiedPayments.get(sessionId);
+      if (data.userId === userId && data.status === 'paid') {
+        return res.json({ success: true, status: 'already_verified' });
+      }
+    }
+
+    // Verify with Stripe API
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
-    // Check: le paiement est-il vraiment complete ?
-    if (session.payment_status !== 'paid') {
-      return res.status(400).json({ 
+    if (session.payment_status === 'paid') {
+      // Store verification
+      verifiedPayments.set(sessionId, {
+        userId: userId,
+        status: 'paid',
+        amount: session.amount_total,
+        verifiedAt: new Date().toISOString()
+      });
+
+      return res.json({ 
+        success: true, 
+        status: 'paid',
+        amount: session.amount_total 
+      });
+    } else {
+      return res.json({ 
         success: false, 
-        error: 'Paiement non confirme par Stripe',
-        status: session.payment_status
+        status: session.payment_status,
+        error: 'Payment not confirmed' 
       });
     }
-
-    // Check: le montant correspond-il ?
-    if (session.amount_total !== 399) { // 3.99 EUR en centimes
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Montant incorrect' 
-      });
-    }
-
-    // Check: deja utilise ?
-    if (verifiedPayments.has(sessionId)) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Session deja utilisee' 
-      });
-    }
-
-    // Tout est OK - marquer comme verifie
-    verifiedPayments.set(sessionId, {
-      userId: userId,
-      verifiedAt: new Date().toISOString(),
-      customerEmail: session.customer_details?.email || null
-    });
-
-    res.json({ 
-      success: true,
-      message: 'Paiement verifie par Stripe',
-      customerEmail: session.customer_details?.email || null
-    });
-
   } catch (err) {
-    console.error('Erreur verification Stripe:', err.message);
-    res.status(500).json({ 
+    console.error('Stripe verification error:', err);
+    return res.status(500).json({ 
       success: false, 
-      error: 'Erreur serveur lors de la verification' 
+      error: 'Server verification failed' 
     });
   }
 });
 
-// Check si un user a deja un premium actif
+// ========== CHECK PREMIUM STATUS ==========
 app.post('/api/check-premium', async (req, res) => {
   try {
-    const { userId } = req.body;
-    // En prod: verifier dans une vraie base de donnees
-    // Ici on simule - le client gere ca via localStorage mais avec un token signe
-    res.json({ premium: false });
+    const { sessionId, userId } = req.body;
+
+    if (!sessionId || !userId) {
+      return res.status(400).json({ success: false, error: 'Missing parameters' });
+    }
+
+    // Check our records
+    const payment = verifiedPayments.get(sessionId);
+    if (payment && payment.userId === userId && payment.status === 'paid') {
+      return res.json({ success: true, premium: true });
+    }
+
+    // Also verify with Stripe (in case webhook updated it)
+    try {
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      if (session.payment_status === 'paid') {
+        verifiedPayments.set(sessionId, {
+          userId: userId,
+          status: 'paid',
+          verifiedAt: new Date().toISOString()
+        });
+        return res.json({ success: true, premium: true });
+      }
+    } catch (e) {
+      // Stripe check failed
+    }
+
+    return res.json({ success: true, premium: false });
   } catch (err) {
-    res.status(500).json({ error: 'Erreur serveur' });
+    return res.status(500).json({ success: false, error: 'Server error' });
   }
+});
+
+// ========== WEBHOOK (for automatic verification) ==========
+app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the checkout.session.completed event
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+
+    // Store the verified payment
+    verifiedPayments.set(session.id, {
+      userId: session.client_reference_id || 'unknown',
+      status: 'paid',
+      amount: session.amount_total,
+      customerEmail: session.customer_details?.email,
+      verifiedAt: new Date().toISOString()
+    });
+
+    console.log('Payment verified via webhook:', session.id);
+  }
+
+  res.json({ received: true });
+});
+
+// ========== HEALTH CHECK ==========
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log('Serveur Beubeuland demarre sur le port ' + PORT);
+  console.log('Beubeuland API running on port', PORT);
 });
