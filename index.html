@@ -5,461 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Beubeuland</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0a0a;
-            color: #fff;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: #0a0a0a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid #222;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .logo span {
-            color: #fff;
-            -webkit-text-fill-color: #fff;
-        }
-
-        .nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: #0a0a0a;
-            border-top: 1px solid #222;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 100;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: #666;
-            font-size: 10px;
-            cursor: pointer;
-            transition: color 0.2s;
-            padding: 8px 16px;
-        }
-
-        .nav-item.active {
-            color: #ff6b6b;
-        }
-
-        .nav-item svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .nav-item.hidden {
-            display: none !important;
-        }
-
-        .content {
-            position: fixed;
-            top: 60px;
-            bottom: 60px;
-            left: 0;
-            right: 0;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .page {
-            display: none;
-            padding: 16px;
-            min-height: 100%;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .video-container {
-            position: relative;
-            width: 100%;
-            height: calc(100vh - 120px);
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 16px;
-        }
-
-        .video-container video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .video-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 60px 16px 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-        }
-
-        .video-info h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .video-info p {
-            font-size: 13px;
-            color: #aaa;
-        }
-
-        .video-actions {
-            position: absolute;
-            right: 12px;
-            bottom: 80px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            align-items: center;
-        }
-
-        .action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: #fff;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .action-btn svg {
-            width: 32px;
-            height: 32px;
-            fill: #fff;
-        }
-
-        .action-btn.liked svg {
-            fill: #ff6b6b;
-        }
-
-        .like-count {
-            font-size: 12px;
-            color: #fff;
-        }
-
-        .premium-card {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 16px;
-            padding: 32px 24px;
-            text-align: center;
-            margin-top: 20px;
-            border: 1px solid #333;
-        }
-
-        .premium-card h2 {
-            font-size: 24px;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .premium-card .price {
-            font-size: 42px;
-            font-weight: 800;
-            margin: 16px 0;
-        }
-
-        .premium-card .price span {
-            font-size: 16px;
-            font-weight: 400;
-            color: #aaa;
-        }
-
-        .premium-features {
-            text-align: left;
-            margin: 24px 0;
-            list-style: none;
-        }
-
-        .premium-features li {
-            padding: 8px 0;
-            color: #ccc;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .premium-features li::before {
-            content: "✓";
-            color: #4ade80;
-            font-weight: bold;
-        }
-
-        .btn-subscribe {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
-            border: none;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 16px;
-        }
-
-        .btn-already-paid {
-            width: 100%;
-            padding: 12px;
-            background: transparent;
-            border: 1px solid #444;
-            border-radius: 12px;
-            color: #aaa;
-            font-size: 14px;
-            cursor: pointer;
-            margin-top: 12px;
-        }
-
-        .premium-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #000;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            margin-top: 16px;
-        }
-
-        .profile-header {
-            text-align: center;
-            padding: 24px 0;
-        }
-
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            margin: 0 auto 12px;
-        }
-
-        .profile-name {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .profile-handle {
-            color: #888;
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
-        .profile-stats {
-            display: flex;
-            justify-content: center;
-            gap: 32px;
-            margin-top: 20px;
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #888;
-            margin-top: 2px;
-        }
-
-        .profile-tabs {
-            display: flex;
-            border-bottom: 1px solid #222;
-            margin-top: 24px;
-        }
-
-        .profile-tab {
-            flex: 1;
-            text-align: center;
-            padding: 12px;
-            color: #888;
-            font-size: 14px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-        }
-
-        .profile-tab.active {
-            color: #fff;
-            border-bottom-color: #ff6b6b;
-        }
-
-        .upload-area {
-            border: 2px dashed #444;
-            border-radius: 16px;
-            padding: 48px 24px;
-            text-align: center;
-            margin-top: 20px;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        .upload-area:hover {
-            border-color: #ff6b6b;
-        }
-
-        .upload-area svg {
-            width: 48px;
-            height: 48px;
-            color: #666;
-            margin-bottom: 12px;
-        }
-
-        .upload-area p {
-            color: #888;
-            font-size: 14px;
-        }
-
-        .locked-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.95);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            padding: 24px;
-            text-align: center;
-        }
-
-        .locked-overlay.hidden {
-            display: none;
-        }
-
-        .locked-overlay h2 {
-            font-size: 22px;
-            margin-bottom: 12px;
-        }
-
-        .locked-overlay p {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 24px;
-        }
-
-        .dev-btn {
-            position: fixed;
-            bottom: 70px;
-            right: 12px;
-            width: 40px;
-            height: 40px;
-            background: #222;
-            border: 1px solid #444;
-            border-radius: 50%;
-            color: #666;
-            font-size: 10px;
-            cursor: pointer;
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .dev-btn.active {
-            background: #ff6b6b;
-            color: #fff;
-        }
-
-        .video-nav-btn {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: #fff;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            z-index: 10;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #fff; height: 100vh; overflow: hidden; }
+        .header { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: #0a0a0a; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #222; z-index: 100; }
+        .logo { font-size: 22px; font-weight: 800; letter-spacing: -1px; background: linear-gradient(135deg, #ff6b6b, #ee5a5a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo span { color: #fff; -webkit-text-fill-color: #fff; }
+        .nav { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #0a0a0a; border-top: 1px solid #222; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #666; font-size: 10px; cursor: pointer; padding: 8px 16px; }
+        .nav-item.active { color: #ff6b6b; }
+        .nav-item svg { width: 24px; height: 24px; }
+        .nav-item.hidden { display: none !important; }
+        .content { position: fixed; top: 60px; bottom: 60px; left: 0; right: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .page { display: none; min-height: 100%; }
+        .page.active { display: block; }
+        .video-container { position: relative; width: 100%; height: calc(100vh - 120px); background: #000; overflow: hidden; }
+        .video-container video { width: 100%; height: 100%; object-fit: cover; }
+        .video-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 60px 16px 20px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); }
+        .video-info h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .video-info p { font-size: 13px; color: #aaa; }
+        .video-actions { position: absolute; right: 12px; bottom: 100px; display: flex; flex-direction: column; gap: 16px; align-items: center; }
+        .action-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #fff; font-size: 12px; cursor: pointer; }
+        .action-btn svg { width: 32px; height: 32px; fill: #fff; }
+        .action-btn.liked svg { fill: #ff6b6b; }
+        .like-count { font-size: 12px; }
+        .video-nav-btn { position: absolute; left: 50%; transform: translateX(-50%); background: rgba(255,255,255,0.15); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; z-index: 10; backdrop-filter: blur(4px); }
         .video-nav-btn.up { top: 20px; }
         .video-nav-btn.down { bottom: 20px; }
-
-        @media (min-width: 768px) {
-            .content {
-                max-width: 480px;
-                margin: 0 auto;
-                left: 50%;
-                transform: translateX(-50%);
-            }
-        }
+        .premium-card { background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 16px; padding: 32px 24px; text-align: center; margin: 20px 16px; border: 1px solid #333; }
+        .premium-card h2 { font-size: 24px; margin-bottom: 12px; background: linear-gradient(135deg, #ffd700, #ffaa00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .premium-card .price { font-size: 42px; font-weight: 800; margin: 16px 0; }
+        .premium-card .price span { font-size: 16px; font-weight: 400; color: #aaa; }
+        .premium-features { text-align: left; margin: 24px 0; list-style: none; }
+        .premium-features li { padding: 8px 0; color: #ccc; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+        .premium-features li::before { content: "✓"; color: #4ade80; font-weight: bold; }
+        .btn-subscribe { width: 100%; padding: 16px; background: linear-gradient(135deg, #ff6b6b, #ee5a5a); border: none; border-radius: 12px; color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 16px; }
+        .btn-already-paid { width: 100%; padding: 12px; background: transparent; border: 1px solid #444; border-radius: 12px; color: #aaa; font-size: 14px; cursor: pointer; margin-top: 12px; }
+        .premium-badge { display: inline-block; background: linear-gradient(135deg, #ffd700, #ffaa00); color: #000; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-top: 16px; }
+        .profile-header { text-align: center; padding: 24px 16px; }
+        .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #ff6b6b, #ee5a5a); display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px; }
+        .profile-name { font-size: 20px; font-weight: 700; }
+        .profile-handle { color: #888; font-size: 14px; margin-top: 4px; }
+        .profile-stats { display: flex; justify-content: center; gap: 32px; margin-top: 20px; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 20px; font-weight: 700; }
+        .stat-label { font-size: 12px; color: #888; margin-top: 2px; }
+        .upload-area { border: 2px dashed #444; border-radius: 16px; padding: 48px 24px; text-align: center; margin: 20px 16px; cursor: pointer; }
+        .upload-area:hover { border-color: #ff6b6b; }
+        .locked-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 200; padding: 24px; text-align: center; }
+        .locked-overlay.visible { display: flex; }
+        .dev-btn { position: fixed; bottom: 70px; right: 12px; width: 40px; height: 40px; background: #222; border: 1px solid #444; border-radius: 50%; color: #666; font-size: 10px; cursor: pointer; z-index: 50; display: flex; align-items: center; justify-content: center; }
+        .dev-btn.active { background: #ff6b6b; color: #fff; }
+        @media (min-width: 768px) { .content { max-width: 480px; margin: 0 auto; left: 50%; transform: translateX(-50%); } }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <div class="logo">Beubeu<span>land</span></div>
-    </div>
+    <div class="header"><div class="logo">Beubeu<span>land</span></div></div>
 
     <div class="content" id="content">
-
         <div class="page active" id="page-feed">
             <div class="video-container" id="video-container">
-                <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;">
-                    Chargement...
-                </div>
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;">Chargement...</div>
             </div>
         </div>
 
@@ -475,45 +80,30 @@
                     <li>Profil personnalisé</li>
                     <li>Sans publicité</li>
                 </ul>
-                <button class="btn-subscribe" id="btn-subscribe" onclick="subscribe()">S'abonner maintenant</button>
-                <button class="btn-already-paid" id="btn-already-paid" onclick="alreadyPaid()">J'ai déjà payé</button>
+                <button class="btn-subscribe" onclick="subscribe()">S'abonner maintenant</button>
+                <button class="btn-already-paid" onclick="alreadyPaid()">J'ai déjà payé</button>
             </div>
         </div>
 
         <div class="page" id="page-profile">
             <div class="profile-header">
                 <div class="profile-avatar">👤</div>
-                <div class="profile-name" id="profile-name">ines_dz🇲🇦🫦</div>
+                <div class="profile-name">ines_dz🇲🇦🫦</div>
                 <div class="profile-handle">@ines_dz</div>
                 <div class="profile-stats">
-                    <div class="stat">
-                        <div class="stat-value" id="stat-videos">0</div>
-                        <div class="stat-label">Vidéos</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="stat-likes">0</div>
-                        <div class="stat-label">Likes</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="stat-views">0</div>
-                        <div class="stat-label">Vues</div>
-                    </div>
-                </div>
-                <div class="profile-tabs">
-                    <div class="profile-tab active">Vidéos</div>
-                    <div class="profile-tab">J'aime</div>
+                    <div class="stat"><div class="stat-value" id="stat-videos">0</div><div class="stat-label">Vidéos</div></div>
+                    <div class="stat"><div class="stat-value" id="stat-likes">0</div><div class="stat-label">Likes</div></div>
+                    <div class="stat"><div class="stat-value" id="stat-views">0</div><div class="stat-label">Vues</div></div>
                 </div>
             </div>
         </div>
 
         <div class="page" id="page-upload">
             <div class="upload-area" onclick="document.getElementById('file-input').click()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                <p>Clique pour uploader une vidéo</p>
+                <p style="color:#888;">Clique pour uploader une vidéo</p>
                 <input type="file" id="file-input" accept="video/*" style="display:none" onchange="handleUpload(this)">
             </div>
         </div>
-
     </div>
 
     <div class="nav" id="nav">
@@ -535,296 +125,174 @@
         </div>
     </div>
 
-    <div class="locked-overlay hidden" id="locked-overlay">
+    <div class="locked-overlay" id="locked-overlay">
         <h2>🔒 Contenu verrouillé</h2>
         <p>Passe en Premium pour accéder à cette fonctionnalité</p>
-        <button class="btn-subscribe" onclick="showPage('premium', document.querySelectorAll('.nav-item')[1]); document.getElementById('locked-overlay').classList.add('hidden')">Voir les offres</button>
+        <button class="btn-subscribe" onclick="showPage('premium', document.querySelectorAll('.nav-item')[1]); document.getElementById('locked-overlay').classList.remove('visible')">Voir les offres</button>
     </div>
 
     <button class="dev-btn" id="dev-btn" onclick="toggleDevMode()">B</button>
 
     <script>
-        // ========== CONFIG ==========
         const API_URL = 'https://beubeu-feed.onrender.com';
         const STRIPE_LINK = 'https://buy.stripe.com/3cIfZgh0IbfIewH2smew80k';
-        const VIDEOS_JSON_URL = 'https://raw.githubusercontent.com/TON-USER/TON-REPO/main/videos.json';
+        const VIDEOS_JSON_URL = 'https://raw.githubusercontent.com/page-edit/beubeuland/main/videos.json';
         const DEV_CODE = 'sil55201';
 
-        // ========== STATE ==========
-        let isPremium = false;
-        let isDevMode = false;
-        let devClicks = 0;
+        let isPremium = false, isDevMode = false, devClicks = 0;
         let userId = localStorage.getItem('beubeu_user_id');
         let sessionId = localStorage.getItem('beubeu_session_id');
-        let currentVideos = [];
-        let currentVideoIndex = 0;
+        let currentVideos = [], currentVideoIndex = 0;
 
         if (!userId) {
             userId = 'user_' + Math.random().toString(36).substr(2, 9);
             localStorage.setItem('beubeu_user_id', userId);
         }
 
-        // ========== INIT ==========
         async function init() {
-            if (sessionId) {
-                await checkPremiumStatus();
-            } else {
-                updateUI();
-            }
-            await loadVideosFromGitHub();
-            setInterval(loadVideosFromGitHub, 30000);
-            verifyAfterStripeReturn();
+            if (sessionId) await checkPremium();
+            else updateUI();
+            await loadVideos();
+            setInterval(loadVideos, 30000);
+            verifyStripeReturn();
         }
 
-        // ========== CHECK PREMIUM ==========
-        async function checkPremiumStatus() {
-            if (!sessionId) {
-                isPremium = false;
-                updateUI();
-                return;
-            }
-
+        async function checkPremium() {
+            if (!sessionId) { isPremium = false; updateUI(); return; }
             try {
-                const response = await fetch(`${API_URL}/api/check-premium`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const res = await fetch(`${API_URL}/api/check-premium`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ sessionId, userId })
                 });
-
-                const data = await response.json();
-
-                if (data.premium) {
-                    isPremium = true;
-                    localStorage.setItem('beubeu_premium', 'true');
-                } else {
-                    isPremium = false;
-                    localStorage.removeItem('beubeu_premium');
-                }
-            } catch (err) {
-                console.error('Check premium error:', err);
+                const data = await res.json();
+                isPremium = data.premium;
+                localStorage.setItem('beubeu_premium', isPremium);
+            } catch (e) {
                 isPremium = localStorage.getItem('beubeu_premium') === 'true';
             }
-
             updateUI();
         }
 
-        // ========== UPDATE UI ==========
         function updateUI() {
-            const navProfile = document.getElementById('nav-profile');
-            const navUpload = document.getElementById('nav-upload');
-
-            if (isPremium || isDevMode) {
-                navProfile.classList.remove('hidden');
-                navUpload.classList.remove('hidden');
-            } else {
-                navProfile.classList.add('hidden');
-                navUpload.classList.add('hidden');
-            }
-
-            const premiumCard = document.getElementById('premium-card');
+            const show = isPremium || isDevMode;
+            document.getElementById('nav-profile').classList.toggle('hidden', !show);
+            document.getElementById('nav-upload').classList.toggle('hidden', !show);
             if (isPremium) {
-                premiumCard.innerHTML = `
-                    <h2>✨ Premium Actif</h2>
-                    <div class="premium-badge">ABONNÉ</div>
-                    <p style="margin-top: 16px; color: #888;">Tu as accès à tout le contenu !</p>
-                `;
+                document.getElementById('premium-card').innerHTML = '<h2>✨ Premium Actif</h2><div class="premium-badge">ABONNÉ</div><p style="margin-top:16px;color:#888;">Accès complet !</p>';
             }
         }
 
-        // ========== LOAD VIDEOS ==========
-        async function loadVideosFromGitHub() {
+        async function loadVideos() {
             try {
-                const response = await fetch(`${VIDEOS_JSON_URL}?t=${Date.now()}`);
-                const data = await response.json();
+                const res = await fetch(`${VIDEOS_JSON_URL}?t=${Date.now()}`);
+                const data = await res.json();
                 currentVideos = data.videos || [];
-                
-                if (currentVideos.length === 0) {
-                    document.getElementById('video-container').innerHTML = `
-                        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;">
-                            Aucune vidéo disponible
-                        </div>`;
+                if (!currentVideos.length) {
+                    document.getElementById('video-container').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;">Aucune vidéo</div>';
                     return;
                 }
-                
-                renderCurrentVideo();
-            } catch (err) {
-                console.error('Erreur chargement vidéos:', err);
-            }
+                renderVideo();
+            } catch (e) { console.error(e); }
         }
 
-        // ========== RENDER VIDEO ==========
-        function renderCurrentVideo() {
-            const video = currentVideos[currentVideoIndex];
-            if (!video) return;
-
-            const container = document.getElementById('video-container');
-            
-            container.innerHTML = `
+        function renderVideo() {
+            const v = currentVideos[currentVideoIndex];
+            if (!v) return;
+            document.getElementById('video-container').innerHTML = `
                 <video id="main-video" loop playsinline muted autoplay style="width:100%;height:100%;object-fit:cover;">
-                    <source src="${video.videoUrl}" type="${video.fileType || 'video/mp4'}">
+                    <source src="${v.videoUrl}" type="${v.fileType || 'video/mp4'}">
                 </video>
-                <div class="video-overlay">
-                    <div class="video-info">
-                        <h3>${escapeHtml(video.authorName || 'ines_dz🇲🇦🫦')}</h3>
-                        <p>${escapeHtml(video.title)}</p>
-                    </div>
-                </div>
+                <div class="video-overlay"><div class="video-info"><h3>${escapeHtml(v.authorName || 'ines_dz🇲🇦🫦')}</h3><p>${escapeHtml(v.title)}</p></div></div>
                 <button class="video-nav-btn up" onclick="prevVideo()">▲</button>
                 <button class="video-nav-btn down" onclick="nextVideo()">▼</button>
                 <div class="video-actions">
-                    <div class="action-btn ${isLiked(video.id) ? 'liked' : ''}" id="like-btn" onclick="toggleLike(this, '${video.id}')">
+                    <div class="action-btn ${isLiked(v.id)?'liked':''}" onclick="toggleLike(this,'${v.id}')">
                         <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                        <span class="like-count" id="like-count-${video.id}">${video.likes || 0}</span>
+                        <span class="like-count">${v.likes || 0}</span>
                     </div>
-                </div>
-            `;
-            
+                </div>`;
             document.getElementById('stat-videos').textContent = currentVideos.length;
         }
 
-        function nextVideo() {
-            currentVideoIndex = (currentVideoIndex + 1) % currentVideos.length;
-            renderCurrentVideo();
-        }
+        function nextVideo() { currentVideoIndex = (currentVideoIndex + 1) % currentVideos.length; renderVideo(); }
+        function prevVideo() { currentVideoIndex = (currentVideoIndex - 1 + currentVideos.length) % currentVideos.length; renderVideo(); }
 
-        function prevVideo() {
-            currentVideoIndex = (currentVideoIndex - 1 + currentVideos.length) % currentVideos.length;
-            renderCurrentVideo();
-        }
-
-        // ========== LIKE SYSTEM ==========
-        function isLiked(videoId) {
-            const liked = JSON.parse(localStorage.getItem('beubeu_liked') || '[]');
-            return liked.includes(videoId);
-        }
-
-        function toggleLike(btn, videoId) {
+        function isLiked(id) { return (JSON.parse(localStorage.getItem('beubeu_liked')||'[]')).includes(id); }
+        function toggleLike(btn, id) {
+            let liked = JSON.parse(localStorage.getItem('beubeu_liked')||'[]');
             const countEl = btn.querySelector('.like-count');
             let count = parseInt(countEl.textContent);
-            const liked = JSON.parse(localStorage.getItem('beubeu_liked') || '[]');
-            
-            if (btn.classList.contains('liked')) {
-                btn.classList.remove('liked');
-                count = Math.max(0, count - 1);
-                const idx = liked.indexOf(videoId);
-                if (idx > -1) liked.splice(idx, 1);
+            if (liked.includes(id)) {
+                liked = liked.filter(x => x !== id); btn.classList.remove('liked'); count--;
             } else {
-                btn.classList.add('liked');
-                count++;
-                if (!liked.includes(videoId)) liked.push(videoId);
+                liked.push(id); btn.classList.add('liked'); count++;
             }
-            
             countEl.textContent = count;
             localStorage.setItem('beubeu_liked', JSON.stringify(liked));
         }
 
-        // ========== NAVIGATION ==========
-        function showPage(pageName, navItem) {
-            if ((pageName === 'profile' || pageName === 'upload') && !isPremium && !isDevMode) {
-                document.getElementById('locked-overlay').classList.remove('hidden');
+        function showPage(name, el) {
+            if ((name === 'profile' || name === 'upload') && !isPremium && !isDevMode) {
+                document.getElementById('locked-overlay').classList.add('visible');
                 return;
             }
-
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-            document.getElementById('page-' + pageName).classList.add('active');
-            navItem.classList.add('active');
+            document.getElementById('page-' + name).classList.add('active');
+            el.classList.add('active');
         }
 
-        // ========== SUBSCRIBE ==========
-        function subscribe() {
-            window.location.href = STRIPE_LINK;
-        }
+        function subscribe() { window.location.href = STRIPE_LINK; }
 
-        // ========== ALREADY PAID ==========
         async function alreadyPaid() {
-            const inputSessionId = prompt('Entrez votre ID de session Stripe (commence par cs_...) :');
-            
-            if (!inputSessionId || !inputSessionId.startsWith('cs_')) {
-                alert('ID de session invalide');
-                return;
-            }
-
+            const sid = prompt('Entrez votre ID de session Stripe (cs_...) :');
+            if (!sid?.startsWith('cs_')) { alert('Invalide'); return; }
             try {
-                const response = await fetch(`${API_URL}/api/verify-payment`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sessionId: inputSessionId, userId })
+                const res = await fetch(`${API_URL}/api/verify-payment`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId: sid, userId })
                 });
-
-                const data = await response.json();
-
+                const data = await res.json();
                 if (data.success && (data.status === 'paid' || data.status === 'already_verified')) {
-                    sessionId = inputSessionId;
-                    localStorage.setItem('beubeu_session_id', sessionId);
-                    localStorage.setItem('beubeu_premium', 'true');
-                    isPremium = true;
-                    updateUI();
-                    alert('✅ Accès premium activé !');
-                } else {
-                    alert('❌ Paiement non trouvé.');
-                }
-            } catch (err) {
-                alert('❌ Erreur.');
-            }
+                    sessionId = sid; localStorage.setItem('beubeu_session_id', sid); localStorage.setItem('beubeu_premium', 'true');
+                    isPremium = true; updateUI(); alert('✅ Premium activé !');
+                } else { alert('❌ Non trouvé'); }
+            } catch (e) { alert('❌ Erreur'); }
         }
 
-        // ========== VERIFY AFTER STRIPE RETURN ==========
-        async function verifyAfterStripeReturn() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const returnedSessionId = urlParams.get('session_id');
-
-            if (returnedSessionId) {
-                try {
-                    const response = await fetch(`${API_URL}/api/verify-payment`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ sessionId: returnedSessionId, userId })
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success && data.status === 'paid') {
-                        sessionId = returnedSessionId;
-                        localStorage.setItem('beubeu_session_id', sessionId);
-                        localStorage.setItem('beubeu_premium', 'true');
-                        isPremium = true;
-                        updateUI();
-                        alert('✅ Paiement confirmé !');
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                    }
-                } catch (err) {
-                    console.error('Verify error:', err);
+        async function verifyStripeReturn() {
+            const sid = new URLSearchParams(window.location.search).get('session_id');
+            if (!sid) return;
+            try {
+                const res = await fetch(`${API_URL}/api/verify-payment`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId: sid, userId })
+                });
+                const data = await res.json();
+                if (data.success && data.status === 'paid') {
+                    sessionId = sid; localStorage.setItem('beubeu_session_id', sid); localStorage.setItem('beubeu_premium', 'true');
+                    isPremium = true; updateUI(); alert('✅ Paiement confirmé !');
+                    window.history.replaceState({}, document.title, window.location.pathname);
                 }
-            }
+            } catch (e) { console.error(e); }
         }
 
-        // ========== UPLOAD ==========
         function handleUpload(input) {
             const file = input.files[0];
             if (!file) return;
-
-            if (!isPremium && !isDevMode) {
-                alert('Upload réservé aux membres Premium');
-                return;
-            }
-
-            alert('Vidéo sélectionnée : ' + file.name + '\n(Upload à implémenter)');
+            if (!isPremium && !isDevMode) { alert('Premium requis'); return; }
+            alert('Sélectionné : ' + file.name + '\n(Upload admin uniquement pour l\'instant)');
         }
 
-        // ========== DEV MODE ==========
         function toggleDevMode() {
             devClicks++;
-            
             if (devClicks >= 3) {
-                const code = prompt('Entrez le code développeur :');
+                const code = prompt('Code développeur :');
                 if (code === DEV_CODE) {
                     isDevMode = !isDevMode;
-                    const btn = document.getElementById('dev-btn');
-                    btn.classList.toggle('active', isDevMode);
+                    document.getElementById('dev-btn').classList.toggle('active', isDevMode);
                     updateUI();
-                    alert(isDevMode ? 'Mode développeur ACTIVÉ' : 'Mode développeur DÉSACTIVÉ');
+                    alert(isDevMode ? 'Dev ON' : 'Dev OFF');
                 }
                 devClicks = 0;
             }
@@ -837,7 +305,6 @@
             return div.innerHTML;
         }
 
-        // ========== START ==========
         init();
     </script>
 </body>
