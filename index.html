@@ -559,21 +559,16 @@ body {
 
         <!-- Bouton Activer (apparait apres paiement Stripe) -->
         <div id="sub-btn-activate" style="display:none;">
-          <button onclick="activatePremiumDirect()" class="w-full flex items-center justify-center gap-2 py-4 bg-emerald-600 text-white font-semibold rounded-2xl text-sm cursor-pointer border-none">
+          <button id="activate-premium-btn" onclick="verifyAndActivatePremium()" class="w-full flex items-center justify-center gap-2 py-4 bg-emerald-600 text-white font-semibold rounded-2xl text-sm cursor-pointer border-none">
             <i class="fas fa-check-circle"></i> Activer mon Premium
           </button>
+          <div id="activate-loading" style="display:none;text-align:center;margin-top:8px;">
+            <div class="spinner" style="width:20px;height:20px;border-width:2px;display:inline-block;vertical-align:middle;margin-right:6px;"></div>
+            <span style="font-size:12px;color:#a1a1aa;">Verification du paiement...</span>
+          </div>
+          <div id="activate-error" style="display:none;text-align:center;font-size:11px;color:#ef4444;margin-top:8px;"></div>
           <div style="text-align:center;font-size:11px;color:#a1a1aa;margin-top:8px;">
             <i class="fas fa-info-circle"></i> Paiement confirme sur Stripe &mdash; cliquez pour activer
-          </div>
-        </div>
-
-        <!-- Bouton J'ai deja paye (fallback si retour sans session_id) -->
-        <div id="sub-btn-already-paid" style="display:none;">
-          <button onclick="activatePremiumDirect()" class="w-full flex items-center justify-center gap-2 py-4 bg-zinc-700 text-white font-semibold rounded-2xl text-sm cursor-pointer border-none">
-            <i class="fas fa-check-circle"></i> J'ai deja paye
-          </button>
-          <div style="text-align:center;font-size:11px;color:#a1a1aa;margin-top:8px;">
-            <i class="fas fa-info-circle"></i> Si vous avez deja paye sur Stripe, cliquez ici
           </div>
         </div>
 
@@ -1329,7 +1324,7 @@ function shareVideo(id) {
   }
 }
 
-/* ========== STRIPE SUBSCRIPTION FLOW ========== */
+/* ========== SECURE STRIPE SUBSCRIPTION FLOW ========== */
 
 // Called when user clicks "S'abonner" button
 function onStripeClick() {
@@ -1338,64 +1333,114 @@ function onStripeClick() {
   localStorage.setItem('beubeuland_stripe_pending_time', Date.now().toString());
 }
 
-// Check if user returned from Stripe with success
+// Check if user returned from Stripe with session_id in URL
 function checkStripeReturn() {
   const urlParams = new URLSearchParams(window.location.search);
   const sessionId = urlParams.get('session_id');
-  const hasSuccess = urlParams.get('success') === '1' || urlParams.get('payment') === 'success';
 
-  // If Stripe redirected back with session_id or success param
-  if (sessionId || hasSuccess) {
+  // If Stripe redirected back with session_id
+  if (sessionId) {
+    localStorage.setItem('beubeuland_stripe_session', sessionId);
     localStorage.setItem('beubeuland_stripe_pending', 'true');
-    if (sessionId) {
-      localStorage.setItem('beubeuland_stripe_session', sessionId);
-    }
-    // Clean URL
+    // Clean URL (remove session_id from URL)
     window.history.replaceState({}, document.title, window.location.pathname);
-    return true;
+    return { hasReturn: true, sessionId: sessionId };
   }
 
-  // Also check if there's a pending payment flag (user clicked S'abonner)
+  // Check if there's a stored session_id from a previous redirect
+  const storedSession = localStorage.getItem('beubeuland_stripe_session');
   const pending = localStorage.getItem('beubeuland_stripe_pending');
   const pendingTime = parseInt(localStorage.getItem('beubeuland_stripe_pending_time') || '0', 10);
   const now = Date.now();
 
   // Pending flag expires after 30 minutes
-  if (pending === 'true' && (now - pendingTime) < 30 * 60 * 1000) {
-    return true;
+  if ((pending === 'true' || storedSession) && (now - pendingTime) < 30 * 60 * 1000) {
+    return { hasReturn: true, sessionId: storedSession };
   }
 
-  return false;
+  return { hasReturn: false, sessionId: null };
+}
+
+// SECURE: Verify payment with server before activating
+async function verifyAndActivatePremium() {
+  const sessionId = localStorage.getItem('beubeuland_stripe_session');
+  const userId = getUserId();
+
+  if (!sessionId) {
+    showDevToast('❌ Aucune session de paiement trouvee');
+    return;
+  }
+
+  // Show loading state
+  const btn = document.getElementById('activate-premium-btn');
+  const loading = document.getElementById('activate-loading');
+  const errorDiv = document.getElementById('activate-error');
+
+  if (btn) btn.disabled = true;
+  if (loading) loading.style.display = 'block';
+  if (errorDiv) errorDiv.style.display = 'none';
+
+  try {
+    // CRITICAL: Verify with server that payment is confirmed
+    const res = await fetch(API_URL + '/verify-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId: sessionId, userId: userId })
+    });
+
+    if (!res.ok) {
+      throw new Error('Server error: ' + res.status);
+    }
+
+    const data = await res.json();
+
+    if (data.success && (data.status === 'paid' || data.status === 'already_verified')) {
+      // Server confirmed payment - activate premium
+      activatePremiumDirect();
+    } else {
+      // Server says payment NOT confirmed
+      if (errorDiv) {
+        errorDiv.textContent = '❌ Paiement non confirme par Stripe. Si vous venez de payer, attendez 1-2 minutes et reessayez.';
+        errorDiv.style.display = 'block';
+      }
+      if (btn) btn.disabled = false;
+    }
+  } catch (err) {
+    console.error('Verification error:', err);
+    if (errorDiv) {
+      errorDiv.textContent = '❌ Impossible de contacter le serveur. Verifiez votre connexion.';
+      errorDiv.style.display = 'block';
+    }
+    if (btn) btn.disabled = false;
+  } finally {
+    if (loading) loading.style.display = 'none';
+  }
 }
 
 // Update subscription buttons visibility
 function updateSubscriptionButtons() {
   const normalBtn = document.getElementById('sub-btn-normal');
   const activateBtn = document.getElementById('sub-btn-activate');
-  const alreadyPaidBtn = document.getElementById('sub-btn-already-paid');
   const cancelBtn = document.getElementById('cancel-sub-btn');
 
   if (!normalBtn || !activateBtn) return;
 
-  const hasPendingPayment = checkStripeReturn();
+  const stripeReturn = checkStripeReturn();
 
   if (isPremium) {
     // Premium active: hide all payment buttons, show cancel
     normalBtn.style.display = 'none';
     activateBtn.style.display = 'none';
-    if (alreadyPaidBtn) alreadyPaidBtn.style.display = 'none';
     if (cancelBtn) cancelBtn.classList.remove('hidden');
-  } else if (hasPendingPayment) {
-    // Payment pending/returned from Stripe: show activate button
+  } else if (stripeReturn.hasReturn && stripeReturn.sessionId) {
+    // Returned from Stripe with session_id: show activate button (requires server verification)
     normalBtn.style.display = 'none';
     activateBtn.style.display = 'block';
-    if (alreadyPaidBtn) alreadyPaidBtn.style.display = 'none';
     if (cancelBtn) cancelBtn.classList.add('hidden');
   } else {
     // No payment yet: show normal subscribe button
     normalBtn.style.display = 'block';
     activateBtn.style.display = 'none';
-    if (alreadyPaidBtn) alreadyPaidBtn.style.display = 'none';
     if (cancelBtn) cancelBtn.classList.add('hidden');
   }
 }
