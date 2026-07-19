@@ -23,20 +23,26 @@
     text-align: center;
   }
   .logo {
-    width: 56px;
-    height: 56px;
-    background: #fff;
-    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 20px;
+    gap: 2px;
+    margin: 0 auto 24px;
   }
-  .logo span {
+  .logo .beubeu {
+    color: #fff;
+    font-weight: 900;
+    font-size: 30px;
+    letter-spacing: -1px;
+  }
+  .logo .land {
+    background: #f97316;
     color: #000;
     font-weight: 900;
-    font-size: 26px;
+    font-size: 30px;
     letter-spacing: -1px;
+    padding: 2px 10px;
+    border-radius: 8px;
   }
   h1 {
     font-size: 22px;
@@ -57,7 +63,7 @@
     font-weight: 500;
     margin-bottom: 22px;
   }
-  .lock-pill i { color: #fb923c; font-size: 11px; }
+  .lock-pill i { color: #f97316; font-size: 11px; }
 
   p.desc {
     font-size: 14px;
@@ -99,7 +105,7 @@
     font-size: 13px;
     color: #d4d4d8;
   }
-  .price-box li i { color: #34d399; font-size: 12px; flex-shrink: 0; }
+  .price-box li i { color: #f97316; font-size: 12px; flex-shrink: 0; }
 
   .pay-btn {
     display: flex;
@@ -108,7 +114,7 @@
     gap: 8px;
     width: 100%;
     padding: 15px;
-    background: #fff;
+    background: #f97316;
     color: #000;
     font-size: 14px;
     font-weight: 700;
@@ -116,7 +122,7 @@
     text-decoration: none;
     transition: transform 0.15s ease, background 0.2s;
   }
-  .pay-btn:hover { background: #e4e4e7; transform: translateY(-1px); }
+  .pay-btn:hover { background: #fb923c; transform: translateY(-1px); }
 
   footer {
     margin-top: 28px;
@@ -128,8 +134,7 @@
 <body>
 
   <div class="card">
-    <div class="logo"><span>B</span></div>
-    <h1>beubeuland</h1>
+    <div class="logo"><span class="beubeu">beubeu</span><span class="land">land</span></div>
     <div class="lock-pill"><i class="fas fa-lock"></i> Acces reserve</div>
 
     <p class="desc">
